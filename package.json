@@ -1,0 +1,17 @@
+{
+  "name": "ibbur",
+  "version": "0.0.1",
+  "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Gherkin",
+    "Cucumbers",
+    "BDD",
+    "TDD"
+  ],
+  "author": "Andres Rios <rianby64@gmail.com>",
+  "license": "ISC"
+}
