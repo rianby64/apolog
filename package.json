@@ -1,10 +1,22 @@
 {
+  "author": {
+    "email": "rianby64@gmail.com",
+    "name": "Andres Rios"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/rianby64/apolog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rianby64/apolog/issues"
+  },
+  "homepage": "https://github.com/rianby64/apolog#readme",
   "name": "apolog",
   "version": "0.0.1a",
   "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start"
   },
   "keywords": [
     "Gherkin",
@@ -12,6 +24,12 @@
     "BDD",
     "TDD"
   ],
-  "author": "Andres Rios <rianby64@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "gherkin": "^3.1.2",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.15",
+    "karma-chrome-launcher": "^0.2.1",
+    "karma-jasmine": "^0.3.6"
+  }
 }
