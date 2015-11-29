@@ -282,8 +282,17 @@ Apolog.prototype.run = function run() {
 }
 
 Apolog.prototype.loadFeature = function loadFeature(feature, file) {
-  feature.file = file || {};
-  this.addFeature(feature);
+  var _feature = feature || {},
+      Gherkin, parser;
+
+  if (feature.constructor === String) {
+    Gherkin = require('gherkin');
+    parser = new Gherkin.Parser();
+    _feature = parser.parse(feature);
+  }
+
+  _feature.file = file || {};
+  this.addFeature(_feature);
 };
 
 Apolog.prototype.feature = function feature(name, fn, thisArg) {
@@ -316,8 +325,20 @@ Apolog.prototype.then = function then(name, fn, thisArg) {
   return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
 };
 
+// TODO> Should I do this?
+var apolog = new Apolog();
+
 // TODO> very poor way to support nodeJS and browser
 var module = module || undefined;
 if (module) {
-  module.exports = Apolog;
+  module.exports = {
+    feature: apolog.feature.bind(apolog),
+    scenario: apolog.scenario.bind(apolog),
+    step: apolog.step.bind(apolog),
+    given: apolog.given.bind(apolog),
+    when: apolog.when.bind(apolog),
+    then: apolog.then.bind(apolog),
+    loadFeature: apolog.loadFeature.bind(apolog),
+    run: apolog.run.bind(apolog)
+  };
 }
