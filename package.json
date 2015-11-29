@@ -1,6 +1,6 @@
 {
-  "name": "ibbur",
-  "version": "0.0.1",
+  "name": "apolog",
+  "version": "0.0.1a",
   "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
   "main": "index.js",
   "scripts": {

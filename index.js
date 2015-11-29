@@ -1,5 +1,5 @@
 'use strict';
-function Ibbur() {
+function Apolog() {
   var _definitions = {},
       _features = [],
       _parent,
@@ -103,15 +103,15 @@ function Ibbur() {
   this.world = world;
 }
 
-Ibbur.prototype.CONST_FEATURE = "Feature";
-Ibbur.prototype.CONST_SCENARIO = "Scenario";
-Ibbur.prototype.CONST_STEP = "Step";
-Ibbur.prototype.CONST_WHEN = "When";
-Ibbur.prototype.CONST_THEN = "Then";
-Ibbur.prototype.CONST_GIVEN = "Given";
-Ibbur.prototype.featureId = 0;
-Ibbur.prototype.scenarioId = 0;
-Ibbur.prototype.stepId = 0;
+Apolog.prototype.CONST_FEATURE = "Feature";
+Apolog.prototype.CONST_SCENARIO = "Scenario";
+Apolog.prototype.CONST_STEP = "Step";
+Apolog.prototype.CONST_WHEN = "When";
+Apolog.prototype.CONST_THEN = "Then";
+Apolog.prototype.CONST_GIVEN = "Given";
+Apolog.prototype.featureId = 0;
+Apolog.prototype.scenarioId = 0;
+Apolog.prototype.stepId = 0;
 
 /**
  * apply definition to describe()
@@ -119,7 +119,7 @@ Ibbur.prototype.stepId = 0;
  * @param {function} definitionFn given from .test.js
  * @param {array} args given by matching feature.name with definitionFn.regExp
  */
-Ibbur.prototype.applyDefinition = function applyDefinition(feature, definition, args) {
+Apolog.prototype.applyDefinition = function applyDefinition(feature, definition, args) {
   var that = this,
       currentParent = this.getParent();
 
@@ -152,7 +152,7 @@ Ibbur.prototype.applyDefinition = function applyDefinition(feature, definition, 
  * @param {object} definition - a definition given by using feature(regexp|string, function)
  * @return {function} definitionFn, {array}args
  */
-Ibbur.prototype.match = function match(feature, definition) {
+Apolog.prototype.match = function match(feature, definition) {
   var result, args;
   if (feature.type !== definition.type) { return };
   if (definition.name.constructor === RegExp) {
@@ -186,7 +186,7 @@ Ibbur.prototype.match = function match(feature, definition) {
   return;
 }
 
-Ibbur.prototype.processStep = function processStep(step) {
+Apolog.prototype.processStep = function processStep(step) {
   var parent = this.getParent(),
       definitions = parent.definitions,
       item, args, definitionFn, result;
@@ -241,7 +241,7 @@ Ibbur.prototype.processStep = function processStep(step) {
   }
 }
 
-Ibbur.prototype.processDefinition = function processDefinition(type, definition) {
+Apolog.prototype.processDefinition = function processDefinition(type, definition) {
   var definitions, item, args, definitionFn, result, parent = this.getParent();
 
   if (parent) {
@@ -277,41 +277,41 @@ Ibbur.prototype.processDefinition = function processDefinition(type, definition)
   }
 }
 
-Ibbur.prototype.run = function run() {
+Apolog.prototype.run = function run() {
   this.getFeatures().forEach(this.processDefinition.bind(this, this.CONST_FEATURE), this);
 }
 
-Ibbur.prototype.loadFeature = function loadFeature(feature, file) {
+Apolog.prototype.loadFeature = function loadFeature(feature, file) {
   feature.file = file || {};
   this.addFeature(feature);
 };
 
-Ibbur.prototype.feature = function feature(name, fn, thisArg) {
+Apolog.prototype.feature = function feature(name, fn, thisArg) {
   fn.featureId = ++this.featureId;
   return this.addDefinition(this.CONST_FEATURE, name, fn, thisArg);
 };
 
-Ibbur.prototype.scenario = function scenario(name, fn, thisArg) {
+Apolog.prototype.scenario = function scenario(name, fn, thisArg) {
   fn.scenarioId = ++this.scenarioId;
   return this.addDefinition(this.CONST_SCENARIO, name, fn, thisArg);
 };
 
-Ibbur.prototype.step = function step(name, fn, thisArg) {
+Apolog.prototype.step = function step(name, fn, thisArg) {
   fn.stepId = ++this.stepId;
   return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
 };
 
-Ibbur.prototype.given = function given(name, fn, thisArg) {
+Apolog.prototype.given = function given(name, fn, thisArg) {
   fn.stepId = ++this.stepId;
   return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
 };
 
-Ibbur.prototype.when = function when(name, fn, thisArg) {
+Apolog.prototype.when = function when(name, fn, thisArg) {
   fn.stepId = ++this.stepId;
   return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
 };
 
-Ibbur.prototype.then = function then(name, fn, thisArg) {
+Apolog.prototype.then = function then(name, fn, thisArg) {
   fn.stepId = ++this.stepId;
   return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
 };
@@ -319,5 +319,5 @@ Ibbur.prototype.then = function then(name, fn, thisArg) {
 // TODO> very poor way to support nodeJS and browser
 var module = module || undefined;
 if (module) {
-  module.exports = Ibbur;
+  module.exports = Apolog;
 }
