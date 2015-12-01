@@ -282,6 +282,7 @@ Apolog.prototype.run = function run() {
   describe('', function() {
     that.getFeatures().forEach(that.processDefinition.bind(that, that.CONST_FEATURE), that);
   });
+  this.reset();
 }
 
 Apolog.prototype.loadFeature = function loadFeature(feature, file) {
