@@ -237,7 +237,7 @@ Apolog.prototype.processStep = function processStep(step) {
   else {
     // TODO> make the standard format for this warning
     // TODO> take in count the info given at definition.location
-    console.error(step.type + '" not found "' + step.name + '" at ' + step.file.path);
+    console.error(step.type + ' not found "' + step.name + '" at ' + step.file.path);
   }
 }
 
@@ -273,7 +273,7 @@ Apolog.prototype.processDefinition = function processDefinition(type, definition
   else {
     // TODO> make the standard format for this warning
     // TODO> take in count the info given at definition.location
-    console.error(definition.type + '" not found "' + definition.name + '" at ' + definition.file.path);
+    console.error(definition.type + ' not found "' + definition.name + '" at ' + definition.file.path);
   }
 }
 
@@ -282,6 +282,7 @@ Apolog.prototype.run = function run() {
   describe('', function() {
     that.getFeatures().forEach(that.processDefinition.bind(that, that.CONST_FEATURE), that);
   });
+  this.reset();
 }
 
 Apolog.prototype.loadFeature = function loadFeature(feature, file) {
