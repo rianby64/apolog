@@ -125,7 +125,7 @@ Apolog.prototype.applyDefinition = function applyDefinition(feature, definition,
 
   function enveloper() {
     that.setParent(definition);
-    return definition.fn.apply(definition.thisArg, args);
+    definition.fn.apply(definition.thisArg, args);
   }
   function appendFilePathToScenario(scenario) {
     scenario.file = feature.file;
@@ -193,11 +193,11 @@ Apolog.prototype.processStep = function processStep(step) {
 
   function enveloperAsync(done) {
     args.push(done); // TODO> is this enough? check the way to pass last arg to definitionFn
-    return definitionFn.apply(result.definition.thisArg, args);
+    definitionFn.apply(result.definition.thisArg, args);
   }
 
   function enveloper() {
-    return definitionFn.apply(result.definition.thisArg, args);
+    definitionFn.apply(result.definition.thisArg, args);
   }
 
   // Search process
@@ -267,7 +267,7 @@ Apolog.prototype.processDefinition = function processDefinition(type, definition
   }
   // if definitionFn found
   if (result) {
-    return this.applyDefinition(definition, result.definition, result.args);
+    this.applyDefinition(definition, result.definition, result.args);
   }
   // If no definition matchet at all
   else {
@@ -278,7 +278,10 @@ Apolog.prototype.processDefinition = function processDefinition(type, definition
 }
 
 Apolog.prototype.run = function run() {
-  this.getFeatures().forEach(this.processDefinition.bind(this, this.CONST_FEATURE), this);
+  var that = this;
+  describe('', function() {
+    that.getFeatures().forEach(that.processDefinition.bind(that, that.CONST_FEATURE), that);
+  });
 }
 
 Apolog.prototype.loadFeature = function loadFeature(feature, file) {
