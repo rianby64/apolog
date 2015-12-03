@@ -120,27 +120,27 @@ Apolog.prototype.stepId = 0;
  * @param {array} args given by matching feature.name with definitionFn.regExp
  */
 Apolog.prototype.applyDefinition = function applyDefinition(feature, definition, args) {
-  var that = this,
+  var items, i, l,
       currentParent = this.getParent();
 
-  function enveloper() {
-    that.setParent(definition);
-    definition.fn.apply(definition.thisArg, args);
-  }
-  function appendFilePathToScenario(scenario) {
-    scenario.file = feature.file;
-    return this.processDefinition(that.CONST_SCENARIO, scenario);
-  }
-  function appendFilePathToStep(step) {
-    step.file = feature.file;
-    return this.processStep(step);
-  }
-  describe(feature.name, enveloper);
+  this.setParent(definition);
+  definition.fn.apply(definition.thisArg, args);
+
   if (feature.hasOwnProperty('scenarioDefinitions')) {
-    feature.scenarioDefinitions.forEach(appendFilePathToScenario, this);
+    items = feature.scenarioDefinitions;
+    l = items.length;
+    for (i = 0; i < l; i++) {
+      items[i].file = feature.file;
+      this.processDefinition(items[i]);
+    }
   }
   else if (feature.hasOwnProperty('steps')) {
-    feature.steps.forEach(appendFilePathToStep, this);
+    items = feature.steps;
+    l = items.length;
+    for (i = 0; i < l; i++) {
+      items[i].file = feature.file;
+      this.processStep(items[i]);
+    }
   }
   this.setParent(currentParent);
 }
@@ -241,8 +241,8 @@ Apolog.prototype.processStep = function processStep(step) {
   }
 }
 
-Apolog.prototype.processDefinition = function processDefinition(type, definition) {
-  var definitions, item, args, definitionFn, result, parent = this.getParent();
+Apolog.prototype.processDefinition = function processDefinition(definition) {
+  var definitions, item, args, definitionFn, result, parent = this.getParent(), that = this;
 
   if (parent) {
     definitions = parent.definitions;
@@ -267,7 +267,9 @@ Apolog.prototype.processDefinition = function processDefinition(type, definition
   }
   // if definitionFn found
   if (result) {
-    this.applyDefinition(definition, result.definition, result.args);
+    describe(definition.name, function() {
+      that.applyDefinition(definition, result.definition, result.args);
+    });
   }
   // If no definition matchet at all
   else {
@@ -278,10 +280,13 @@ Apolog.prototype.processDefinition = function processDefinition(type, definition
 }
 
 Apolog.prototype.run = function run() {
-  var that = this;
-  describe('', function() {
-    that.getFeatures().forEach(that.processDefinition.bind(that, that.CONST_FEATURE), that);
-  });
+  var features = this.getFeatures(),
+      l = features.length,
+      i;
+
+  for (i = 0; i < l; i++) {
+    this.processDefinition(features[i]);
+  }
   this.reset();
 }
 
@@ -346,3 +351,4 @@ if (module) {
     run: apolog.run.bind(apolog)
   };
 }
+
