@@ -1,4 +1,14 @@
 'use strict';
+
+// TODO> very poor way to support nodeJS and browser
+var module = module || undefined,
+    isGeneratorFunction = isGeneratorFunction || undefined,
+    apolog = new ((function(isGeneratorFunction) {
+
+if (!isGeneratorFunction) {
+  isGeneratorFunction = require('is-generator').fn
+}
+
 function Apolog() {
   var _definitions = {},
       _features = [],
@@ -124,6 +134,7 @@ Apolog.prototype.applyDefinition = function applyDefinition(feature, definition,
       currentParent = this.getParent();
 
   this.setParent(definition);
+  // TODO> think about describe context being executed async
   definition.fn.apply(definition.thisArg, args);
 
   if (feature.hasOwnProperty('scenarioDefinitions')) {
@@ -196,8 +207,17 @@ Apolog.prototype.processStep = function processStep(step) {
     definitionFn.apply(result.definition.thisArg, args);
   }
 
+  function* coenveloperAsync(done) {
+    args.push(done); // TODO> is this enough? check the way to pass last arg to definitionFn
+    yield* definitionFn.apply(result.definition.thisArg, args);
+  }
+
   function enveloper() {
     definitionFn.apply(result.definition.thisArg, args);
+  }
+
+  function* coenveloper() {
+    yield* definitionFn.apply(result.definition.thisArg, args);
   }
 
   // Search process
@@ -226,10 +246,20 @@ Apolog.prototype.processStep = function processStep(step) {
     definitionFn = result.definition.fn;
     args = result.args;
     if (args.length < definitionFn.length) {
-      it(step.text, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
+      if (isGeneratorFunction(definitionFn)) {
+        it(step.text, coenveloperAsync);
+      }
+      else {
+        it(step.text, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
+      }
     }
     else {
-      it(step.text, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
+      if (isGeneratorFunction(definitionFn)) {
+        it(step.text, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
+      }
+      else {
+        it(step.text, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
+      }
     }
     return;
   }
@@ -294,6 +324,7 @@ Apolog.prototype.loadFeature = function loadFeature(feature, file) {
   var _feature = feature || {},
       Gherkin, parser;
 
+  // Be careful with this comparision. I'm assuming that programm is running in nodeJS environment
   if (feature.constructor === String) {
     Gherkin = require('gherkin');
     parser = new Gherkin.Parser();
@@ -334,11 +365,9 @@ Apolog.prototype.then = function then(name, fn, thisArg) {
   return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
 };
 
-// TODO> Should I do this?
-var apolog = new Apolog();
+return Apolog;
+})(isGeneratorFunction));
 
-// TODO> very poor way to support nodeJS and browser
-var module = module || undefined;
 if (module) {
   module.exports = {
     feature: apolog.feature.bind(apolog),
