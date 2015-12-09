@@ -15,8 +15,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/**/*.test.js',
-      'index.js'
+      'module.js',
+      require.resolve('is-generator'),
+      'index.js',
+      'test/**/*.test.js'
     ],
 
 

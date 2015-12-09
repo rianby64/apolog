@@ -81,9 +81,11 @@ gherkin.definitions = {
  */
 describe("The construction of embedded definitions", function() {
 
+  var gherkin;
   describe("Has an interface that", function() {
     beforeEach(function() {
-      window.gherkin = new Apolog();
+      gherkin = apolog;
+      gherkin.reset();
     });
 
     it("contains> feature(name, fn, thisArg)", function() {
@@ -113,7 +115,8 @@ describe("The construction of embedded definitions", function() {
 
   describe("allows the feature, scenario and step functions to", function() {
     beforeEach(function() {
-      window.gherkin = new Apolog();
+      gherkin = apolog;
+      gherkin.reset();
     });
     /**
      * after calling [definition]('name', fn, thisArg)
