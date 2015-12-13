@@ -14,121 +14,103 @@
   if (!isGeneratorFunction) {
     isGeneratorFunction = require('is-generator').fn
   }
-  var apolog = new Apolog();
+  var CONST_FEATURE = "Feature",
+      CONST_SCENARIO = "Scenario",
+      CONST_STEP = "Step",
+      CONST_WHEN = "When",
+      CONST_THEN = "Then",
+      CONST_GIVEN = "Given",
+      featureId = 0,
+      scenarioId = 0,
+      stepId = 0,
+      _definitions = {},
+      _features = [],
+      _parent,
+      world = new World(),
+      lastId = 0;
 
-  function Apolog() {
-    var _definitions = {},
-        _features = [],
-        _parent,
-        world = new World(),
-        lastId = 0,
-        that = this;
+  function World() {}
 
-    function World() { }
-
-    function setParent(parent) {
-      _parent = parent;
-    }
-    function getParent() {
-      return _parent;
-    }
-
-    /**
-     * Add a definition to the stack.
-     * @param {RegExp, String} name - The identificator to match with a defition from .feature content.
-     * @param {Function} fn - The function that will be executed.
-     * @param {Object} thisArg.
-     * @param {String} type - can be one of the values "feature", "scenario" or "step"
-     */
-    function addDefinition(type, name, fn, thisArg) {
-      var definitions,
-          id,
-          _thisArg = thisArg,
-          parent = getParent();
-
-      if ((type === that.CONST_FEATURE) || (type === that.CONST_SCENARIO)) {
-        definitions = {};
-      }
-
-      if (type === that.CONST_FEATURE) { id = fn.featureId; }
-      else if (type === that.CONST_SCENARIO) { id = fn.scenarioId; }
-      else { id = fn.stepId; }
-
-      // Inherits the thisArg context from parent
-      if (!_thisArg && parent) {
-        _thisArg = parent.thisArg;
-      }
-      // And if nothing is given, set the world by default
-      if (!_thisArg) {
-        _thisArg = world;
-      }
-
-      if (parent) {
-        parent.definitions[lastId] = {
-          id: id,
-          name: name,
-          type: type,
-          fn: fn,
-          thisArg: _thisArg,
-          parent: parent,
-          definitions: definitions
-        }
-      }
-      else {
-        _definitions[lastId] = {
-          id: id,
-          name: name,
-          type: type,
-          fn: fn,
-          thisArg: _thisArg,
-          parent: undefined,
-          definitions: definitions
-        }
-      }
-      lastId++;
-    }
-
-    function getDefinitions() {
-      return _definitions;
-    }
-
-    function addFeature(feature) {
-      _features.push(feature)
-    }
-
-    function getFeatures() {
-      return _features;
-    }
-
-    function reset() {
-      _definitions = {};
-      _features = [];
-      _parent = undefined;
-      this.featureId = this.scenarioId = this.stepId = 0;
-    }
-
-    this.addDefinition = addDefinition;
-    this.addFeature = addFeature;
-
-    this.getDefinitions = getDefinitions;
-    this.getFeatures = getFeatures;
-
-    this.setParent = setParent;
-    this.getParent = getParent;
-    this.reset = reset;
-
-    this.world = world;
+  function setParent(parent) {
+    _parent = parent;
+  }
+  function getParent() {
+    return _parent;
   }
 
-  Apolog.prototype.CONST_FEATURE = "Feature";
-  Apolog.prototype.CONST_SCENARIO = "Scenario";
-  Apolog.prototype.CONST_STEP = "Step";
-  Apolog.prototype.CONST_WHEN = "When";
-  Apolog.prototype.CONST_THEN = "Then";
-  Apolog.prototype.CONST_GIVEN = "Given";
-  Apolog.prototype.featureId = 0;
-  Apolog.prototype.scenarioId = 0;
-  Apolog.prototype.stepId = 0;
+  /**
+   * Add a definition to the stack.
+   * @param {RegExp, String} name - The identificator to match with a defition from .feature content.
+   * @param {Function} fn - The function that will be executed.
+   * @param {Object} thisArg.
+   * @param {String} type - can be one of the values "feature", "scenario" or "step"
+   */
+  function addDefinition(type, name, fn, thisArg) {
+    var definitions,
+        id,
+        _thisArg = thisArg,
+        parent = getParent();
+
+    if ((type === CONST_FEATURE) || (type === CONST_SCENARIO)) {
+      definitions = {};
+    }
+
+    if (type === CONST_FEATURE) { id = fn.featureId; }
+    else if (type === CONST_SCENARIO) { id = fn.scenarioId; }
+    else { id = fn.stepId; }
+
+    // Inherits the thisArg context from parent
+    if (!_thisArg && parent) {
+      _thisArg = parent.thisArg;
+    }
+    // And if nothing is given, set the world by default
+    if (!_thisArg) {
+      _thisArg = world;
+    }
+
+    if (parent) {
+      parent.definitions[lastId] = {
+        id: id,
+        name: name,
+        type: type,
+        fn: fn,
+        thisArg: _thisArg,
+        parent: parent,
+        definitions: definitions
+      }
+    }
+    else {
+      _definitions[lastId] = {
+        id: id,
+        name: name,
+        type: type,
+        fn: fn,
+        thisArg: _thisArg,
+        parent: undefined,
+        definitions: definitions
+      }
+    }
+    lastId++;
+  }
+
+  function getDefinitions() {
+    return _definitions;
+  }
+
+  function addFeature(feature) {
+    _features.push(feature)
+  }
+
+  function getFeatures() {
+    return _features;
+  }
+
+  function reset() {
+    _definitions = {};
+    _features = [];
+    _parent = undefined;
+    featureId = scenarioId = stepId = 0;
+  }
 
   /**
    * apply definition to describe()
@@ -136,11 +118,11 @@
    * @param {function} definitionFn given from .test.js
    * @param {array} args given by matching feature.name with definitionFn.regExp
    */
-  Apolog.prototype.applyDefinition = function applyDefinition(feature, definition, args) {
+  function applyDefinition(feature, definition, args) {
     var items, i, l,
-        currentParent = this.getParent();
+        currentParent = getParent();
 
-    this.setParent(definition);
+    setParent(definition);
     // TODO> think about describe context being executed async
     definition.fn.apply(definition.thisArg, args);
 
@@ -149,7 +131,7 @@
       l = items.length;
       for (i = 0; i < l; i++) {
         items[i].file = feature.file;
-        this.processDefinition(items[i]);
+        processDefinition(items[i]);
       }
     }
     else if (feature.hasOwnProperty('steps')) {
@@ -157,10 +139,10 @@
       l = items.length;
       for (i = 0; i < l; i++) {
         items[i].file = feature.file;
-        this.processStep(items[i]);
+        processStep(items[i]);
       }
     }
-    this.setParent(currentParent);
+    setParent(currentParent);
   }
 
   /**
@@ -170,7 +152,7 @@
    * @param {object} definition - a definition given by using feature(regexp|string, function)
    * @return {function} definitionFn, {array}args
    */
-  Apolog.prototype.match = function match(feature, definition) {
+  function match(feature, definition) {
     var result, args;
     if (feature.type !== definition.type) { return };
     if (definition.name.constructor === RegExp) {
@@ -204,8 +186,8 @@
     return;
   }
 
-  Apolog.prototype.processStep = function processStep(step) {
-    var parent = this.getParent(),
+  function processStep(step) {
+    var parent = getParent(),
         definitions = parent.definitions,
         item, args, definitionFn, result;
 
@@ -231,7 +213,7 @@
     while (true) {
       for (item in definitions) {
         step.name = step.text;
-        result = this.match(step, definitions[item]);
+        result = match(step, definitions[item]);
 
         if (result) {
           break;
@@ -242,7 +224,7 @@
       }
       parent = parent.parent;
       if (!parent) {
-        definitions = this.getDefinitions();
+        definitions = getDefinitions();
       }
       else {
         definitions = parent.definitions;
@@ -278,19 +260,19 @@
     }
   }
 
-  Apolog.prototype.processDefinition = function processDefinition(definition) {
-    var definitions, item, args, definitionFn, result, parent = this.getParent(), that = this;
+  function processDefinition(definition) {
+    var definitions, item, args, definitionFn, result, parent = getParent();
 
     if (parent) {
       definitions = parent.definitions;
     }
     else {
-      definitions = this.getDefinitions();
+      definitions = getDefinitions();
     }
 
     while (true) {
       for (item in definitions) {
-        result = this.match(definition, definitions[item]);
+        result = match(definition, definitions[item]);
 
         if (result) {
           break;
@@ -299,13 +281,13 @@
       if (!parent || result) {
         break;
       }
-      definitions = this.getDefinitions();
+      definitions = getDefinitions();
       parent = undefined;
     }
     // if definitionFn found
     if (result) {
       describe(definition.name, function() {
-        that.applyDefinition(definition, result.definition, result.args);
+        applyDefinition(definition, result.definition, result.args);
       });
     }
     // If no definition matchet at all
@@ -316,18 +298,18 @@
     }
   }
 
-  Apolog.prototype.run = function run() {
-    var features = this.getFeatures(),
+  function run() {
+    var features = getFeatures(),
         l = features.length,
         i;
 
     for (i = 0; i < l; i++) {
-      this.processDefinition(features[i]);
+      processDefinition(features[i]);
     }
-    this.reset();
+    reset();
   }
 
-  Apolog.prototype.loadFeature = function loadFeature(feature, file) {
+  function loadFeature(feature, file) {
     var _feature = feature || {},
         Gherkin, parser;
 
@@ -339,48 +321,48 @@
     }
 
     _feature.file = file || {};
-    this.addFeature(_feature);
+    addFeature(_feature);
   };
 
-  Apolog.prototype.feature = function feature(name, fn, thisArg) {
-    fn.featureId = ++this.featureId;
-    return this.addDefinition(this.CONST_FEATURE, name, fn, thisArg);
+  function feature(name, fn, thisArg) {
+    fn.featureId = ++featureId;
+    return addDefinition(CONST_FEATURE, name, fn, thisArg);
   };
 
-  Apolog.prototype.scenario = function scenario(name, fn, thisArg) {
-    fn.scenarioId = ++this.scenarioId;
-    return this.addDefinition(this.CONST_SCENARIO, name, fn, thisArg);
+  function scenario(name, fn, thisArg) {
+    fn.scenarioId = ++scenarioId;
+    return addDefinition(CONST_SCENARIO, name, fn, thisArg);
   };
 
-  Apolog.prototype.step = function step(name, fn, thisArg) {
-    fn.stepId = ++this.stepId;
-    return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
+  function step(name, fn, thisArg) {
+    fn.stepId = ++stepId;
+    return addDefinition(CONST_STEP, name, fn, thisArg);
   };
 
-  Apolog.prototype.given = function given(name, fn, thisArg) {
-    fn.stepId = ++this.stepId;
-    return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
+  function given(name, fn, thisArg) {
+    fn.stepId = ++stepId;
+    return addDefinition(CONST_STEP, name, fn, thisArg);
   };
 
-  Apolog.prototype.when = function when(name, fn, thisArg) {
-    fn.stepId = ++this.stepId;
-    return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
+  function when(name, fn, thisArg) {
+    fn.stepId = ++stepId;
+    return addDefinition(CONST_STEP, name, fn, thisArg);
   };
 
-  Apolog.prototype.then = function then(name, fn, thisArg) {
-    fn.stepId = ++this.stepId;
-    return this.addDefinition(this.CONST_STEP, name, fn, thisArg);
+  function then(name, fn, thisArg) {
+    fn.stepId = ++stepId;
+    return addDefinition(CONST_STEP, name, fn, thisArg);
   };
 
   return {
-    feature: apolog.feature.bind(apolog),
-    scenario: apolog.scenario.bind(apolog),
-    step: apolog.step.bind(apolog),
-    given: apolog.given.bind(apolog),
-    when: apolog.when.bind(apolog),
-    then: apolog.then.bind(apolog),
-    loadFeature: apolog.loadFeature.bind(apolog),
-    run: apolog.run.bind(apolog)
+    feature: feature, 
+    scenario: scenario,
+    step: step,
+    given: given,
+    when: when,
+    then: then,
+    loadFeature: loadFeature,
+    run: run
   };
 
 }));
