@@ -273,7 +273,8 @@
   }
 
   function processDefinition(definition) {
-    var definitions, item, args, definitionFn, result, parent = getParent();
+    var definitions, item, args, definitionFn, result, parent = getParent(),
+        items, i, l;
 
     if (parent) {
       definitions = parent.definitions;
@@ -305,18 +306,17 @@
         });
       }
       else {
-        describe(definition.name, function() {
-          var items, i, l;
-          if (parent) {
-            items = parent.background;
-            l = items.length;
+        if (parent) {
+          items = parent.background;
+          l = items.length;
 
-            for (i = 0; i < l; i++) {
-              describe(items[i].feature.name, function() {
-                applyDefinition(items[i].feature, items[i].definition.definition, items[i].definition.args, true);
-              });
-            }
+          for (i = 0; i < l; i++) {
+            describe(items[i].feature.name, function() {
+              applyDefinition(items[i].feature, items[i].definition.definition, items[i].definition.args, true);
+            });
           }
+        }
+        describe(definition.name, function() {
           applyDefinition(definition, result.definition, result.args);
         });
       }
