@@ -16,11 +16,13 @@
   }
   var CONST_FEATURE = "Feature",
       CONST_SCENARIO = "Scenario",
+      CONST_BACKGROUND = "Background",
       CONST_STEP = "Step",
       CONST_WHEN = "When",
       CONST_THEN = "Then",
       CONST_GIVEN = "Given",
       featureId = 0,
+      backgroundId = 0,
       scenarioId = 0,
       stepId = 0,
       _definitions = {},
@@ -51,12 +53,13 @@
         _thisArg = thisArg,
         parent = getParent();
 
-    if ((type === CONST_FEATURE) || (type === CONST_SCENARIO)) {
+    if ((type === CONST_FEATURE) || (type === CONST_SCENARIO) || (type === CONST_BACKGROUND)) {
       definitions = {};
     }
 
     if (type === CONST_FEATURE) { id = fn.featureId; }
     else if (type === CONST_SCENARIO) { id = fn.scenarioId; }
+    else if (type === CONST_BACKGROUND) { id = fn.backgroundId; }
     else { id = fn.stepId; }
 
     // Inherits the thisArg context from parent
@@ -86,6 +89,7 @@
         type: type,
         fn: fn,
         thisArg: _thisArg,
+        background: [], // only features may have background. The other definitions won't have background
         parent: undefined,
         definitions: definitions
       }
@@ -109,7 +113,7 @@
     _definitions = {};
     _features = [];
     _parent = undefined;
-    featureId = scenarioId = stepId = 0;
+    featureId = backgroundId = scenarioId = stepId = 0;
   }
 
   /**
@@ -118,14 +122,21 @@
    * @param {function} definitionFn given from .test.js
    * @param {array} args given by matching feature.name with definitionFn.regExp
    */
-  function applyDefinition(feature, definition, args) {
+  function applyDefinition(feature, definition, args, background_execute) {
     var items, i, l,
+        background_execute = background_execute || false,
         currentParent = getParent();
 
     setParent(definition);
     // TODO> think about describe context being executed async
     definition.fn.apply(definition.thisArg, args);
 
+    if (!background_execute) {
+      if (feature.hasOwnProperty('background')) {
+        feature.background.file = feature.file;
+        processDefinition(feature.background);
+      }
+    }
     if (feature.hasOwnProperty('scenarioDefinitions')) {
       items = feature.scenarioDefinitions;
       l = items.length;
@@ -142,6 +153,7 @@
         processStep(items[i]);
       }
     }
+    
     setParent(currentParent);
   }
 
@@ -286,9 +298,28 @@
     }
     // if definitionFn found
     if (result) {
-      describe(definition.name, function() {
-        applyDefinition(definition, result.definition, result.args);
-      });
+      if (definition.type === CONST_BACKGROUND) {
+        parent.background.push({
+          feature: definition,
+          definition: result
+        });
+      }
+      else {
+        describe(definition.name, function() {
+          var items, i, l;
+          if (parent) {
+            items = parent.background;
+            l = items.length;
+
+            for (i = 0; i < l; i++) {
+              describe(items[i].feature.name, function() {
+                applyDefinition(items[i].feature, items[i].definition.definition, items[i].definition.args, true);
+              });
+            }
+          }
+          applyDefinition(definition, result.definition, result.args);
+        });
+      }
     }
     // If no definition matchet at all
     else {
@@ -329,6 +360,11 @@
     return addDefinition(CONST_FEATURE, name, fn, thisArg);
   };
 
+  function background(name, fn, thisArg) {
+    fn.backgroundId = ++backgroundId;
+    return addDefinition(CONST_BACKGROUND, name, fn, thisArg);
+  };
+
   function scenario(name, fn, thisArg) {
     fn.scenarioId = ++scenarioId;
     return addDefinition(CONST_SCENARIO, name, fn, thisArg);
@@ -356,6 +392,7 @@
 
   return {
     feature: feature, 
+    background: background,
     scenario: scenario,
     step: step,
     given: given,
