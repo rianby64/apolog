@@ -90,7 +90,6 @@
         type: type,
         fn: fn,
         thisArg: _thisArg,
-        background: [], // only features may have background. The other definitions won't have background
         parent: undefined,
         definitions: definitions
       }
@@ -123,27 +122,24 @@
    * @param {function} definitionFn given from .test.js
    * @param {array} args given by matching feature.name with definitionFn.regExp
    */
-  function applyDefinition(feature, definition, args, background_execute) {
-    var items, i, l,
-        background_execute = background_execute || false,
+  function applyDefinition(feature, definition, args) {
+    var items, i, l, background,
         currentParent = getParent();
 
     setParent(definition);
     // TODO> think about describe context being executed async
     definition.fn.apply(definition.thisArg, args);
 
-    if (!background_execute) {
-      if (feature.hasOwnProperty('background')) {
-        feature.background.file = feature.file;
-        processDefinition(feature.background);
-      }
+    if (feature.hasOwnProperty('background')) {
+      feature.background.file = feature.file;
+      background = feature.background;
     }
     if (feature.hasOwnProperty('scenarioDefinitions')) {
       items = feature.scenarioDefinitions;
       l = items.length;
       for (i = 0; i < l; i++) {
         items[i].file = feature.file;
-        processDefinition(items[i]);
+        processDefinition(items[i], background);
       }
     }
     else if (feature.hasOwnProperty('steps')) {
@@ -282,9 +278,8 @@
     }
   }
 
-  function processDefinition(definition) {
-    var definitions, item, args, definitionFn, result, parent = getParent(),
-        items, i, l;
+  function processDefinition(definition, background) {
+    var definitions, item, args, definitionFn, result, parent = getParent();
 
     if (parent) {
       definitions = parent.definitions;
@@ -309,27 +304,12 @@
     }
     // if definitionFn found
     if (result) {
-      if (definition.type === CONST_BACKGROUND) {
-        parent.background.push({
-          feature: definition,
-          definition: result
-        });
+      if (background) {
+        processDefinition(background);
       }
-      else {
-        if (parent) {
-          items = parent.background;
-          l = items.length;
-
-          for (i = 0; i < l; i++) {
-            describe(items[i].feature.name, function() {
-              applyDefinition(items[i].feature, items[i].definition.definition, items[i].definition.args, true);
-            });
-          }
-        }
-        describe(definition.name, function() {
-          applyDefinition(definition, result.definition, result.args);
-        });
-      }
+      describe(definition.name, function() {
+        applyDefinition(definition, result.definition, result.args);
+      });
     }
     // If no definition matchet at all
     else {
