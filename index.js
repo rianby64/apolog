@@ -16,6 +16,7 @@
   }
   var CONST_FEATURE = "Feature",
       CONST_SCENARIO = "Scenario",
+      CONST_SCENARIOOUTLINE = "ScenarioOutline",
       CONST_BACKGROUND = "Background",
       CONST_STEP = "Step",
       CONST_WHEN = "When",
@@ -165,8 +166,17 @@
    * @return {function} definitionFn, {array}args
    */
   function match(feature, definition) {
-    var result, args;
-    if (feature.type !== definition.type) { return };
+    var result, args,
+        feature_type = feature.type;
+    if (feature_type === CONST_SCENARIOOUTLINE) {
+      console.log(feature.examples);
+      console.log("SCENARIO OUTLINE not ready yet... coming soon");
+      // feature_type = CONST_SCENARIO;
+    }
+
+    if (feature_type !== definition.type) {
+      return;
+    };
     if (definition.name.constructor === RegExp) {
       args = definition.name.exec(feature.name);
       if (args) { // the given regexp seems to fit the feature.name
