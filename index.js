@@ -167,9 +167,7 @@
     var result, args,
         feature_type = feature.type;
     if (feature_type === CONST_SCENARIOOUTLINE) {
-      console.log(feature.examples);
-      console.log("SCENARIO OUTLINE not ready yet... coming soon");
-      // feature_type = CONST_SCENARIO;
+      feature_type = CONST_SCENARIO;
     }
 
     if (feature_type !== definition.type) {
@@ -281,13 +279,42 @@
   }
 
   function processDefinition(definition, background) {
-    var definitions, item, args, definitionFn, result, parent = getParent();
+    var definitions, item, args, definitionFn, result, parent = getParent(),
+        i, j, l, m, examples, headers, row, tableHeader, tableBody, tableRow;
 
     if (parent) {
       definitions = parent.definitions;
     }
     else {
       definitions = getDefinitions();
+    }
+
+    // Prepare the examples to be applied
+    if (definition.examples) {
+      examples = [];
+      headers = [];
+
+      tableHeader = definition.examples[0].tableHeader;
+      tableBody = definition.examples[0].tableBody;
+
+      l = tableHeader.cells.length;
+      for (i = 0; i < l; i++) {
+        headers.push(tableHeader.cells[i].value);
+      }
+      l = tableBody.length;
+      for (i = 0; i < l; i++) {
+        tableRow = tableBody[i];
+        m = tableRow.cells.length;
+        row = {}
+        for (j = 0; j < m; j++) {
+          row[headers[j]] = tableRow.cells[j].value;
+        }
+        examples.push(row);
+      }
+      for (i = 0; i < l; i++) {
+        console.log('applying', examples[i]);
+      }
+      console.log('PARSED Examples', examples, definition.name);
     }
 
     while (true) {
