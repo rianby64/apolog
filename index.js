@@ -151,6 +151,9 @@
       l = items.length;
       for (i = 0; i < l; i++) {
         items[i].file = feature.file;
+        if (feature.example) {
+          items[i].example = feature.example;
+        }
         processStep(items[i]);
       }
     }
@@ -211,6 +214,7 @@
         definitions = parent.definitions,
         item, args, definitionFn, result;
 
+    //console.log("processing step", step);
     function enveloperAsync(done) {
       args.push(done); // TODO> is this enough? check the way to pass last arg to definitionFn
       definitionFn.apply(result.definition.thisArg, args);
@@ -286,6 +290,9 @@
         key, value, definition_item, definition_replaced, background_replaced,
         definition_set = [definition], background_set; 
 
+    //if (definition.example) {
+    //  console.log('the definition', definition, 'has example', definition.example);
+    //}
     if (parent) {
       definitions = parent.definitions;
     }
