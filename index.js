@@ -14,14 +14,16 @@
   if (!isGeneratorFunction) {
     isGeneratorFunction = require('is-generator').fn
   }
-  var CONST_FEATURE = "Feature",
-      CONST_SCENARIO = "Scenario",
-      CONST_SCENARIOOUTLINE = "ScenarioOutline",
-      CONST_BACKGROUND = "Background",
-      CONST_STEP = "Step",
-      CONST_WHEN = "When",
-      CONST_THEN = "Then",
-      CONST_GIVEN = "Given",
+  var FEATURE = "Feature",
+      SCENARIO = "Scenario",
+      SCENARIOOUTLINE = "ScenarioOutline",
+      BACKGROUND = "Background",
+      STEP = "Step",
+      WHEN = "When",
+      THEN = "Then",
+      GIVEN = "Given",
+      OPEN_PLACEHOLDER = "<",
+      CLOSE_PLACEHOLDER = ">",
       featureId = 0,
       backgroundId = 0,
       scenarioId = 0,
@@ -54,13 +56,13 @@
         _thisArg = thisArg,
         parent = getParent();
 
-    if ((type === CONST_FEATURE) || (type === CONST_SCENARIO) || (type === CONST_BACKGROUND)) {
+    if ((type === FEATURE) || (type === SCENARIO) || (type === BACKGROUND)) {
       definitions = {};
     }
 
-    if (type === CONST_FEATURE) { id = fn.featureId; }
-    else if (type === CONST_SCENARIO) { id = fn.scenarioId; }
-    else if (type === CONST_BACKGROUND) { id = fn.backgroundId; }
+    if (type === FEATURE) { id = fn.featureId; }
+    else if (type === SCENARIO) { id = fn.scenarioId; }
+    else if (type === BACKGROUND) { id = fn.backgroundId; }
     else { id = fn.stepId; }
 
     // Inherits the thisArg context from parent
@@ -166,8 +168,8 @@
   function match(feature, definition) {
     var result, args,
         feature_type = feature.type;
-    if (feature_type === CONST_SCENARIOOUTLINE) {
-      feature_type = CONST_SCENARIO;
+    if (feature_type === SCENARIOOUTLINE) {
+      feature_type = SCENARIO;
     }
 
     if (feature_type !== definition.type) {
@@ -279,8 +281,10 @@
   }
 
   function processDefinition(definition, background) {
-    var definitions, item, args, definitionFn, result, parent = getParent(),
-        i, j, l, m, examples, headers, row, tableHeader, tableBody, tableRow;
+    var definitions, item, args, result, parent = getParent(),
+        i, j, l, m, examples, headers, row, tableHeader, tableBody, tableRow,
+        key, value, definition_item, definition_replaced, background_replaced,
+        definition_set = [definition], background_set; 
 
     if (parent) {
       definitions = parent.definitions;
@@ -289,8 +293,8 @@
       definitions = getDefinitions();
     }
 
-    // Prepare the examples to be applied
     if (definition.examples) {
+      definition_set = [];
       examples = [];
       headers = [];
 
@@ -312,40 +316,65 @@
         examples.push(row);
       }
       for (i = 0; i < l; i++) {
-        console.log('applying', examples[i]);
+        row = definition.name;
+        for (j = 0; j < m; j++) {
+          key = headers[j];
+          value = examples[i][key];
+          row = row.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
+        }
+        definition_replaced = JSON.parse(JSON.stringify(definition));
+        definition_replaced.name = row;
+        definition_replaced.example = examples[i];
+        definition_set.push(definition_replaced);
       }
-      console.log('PARSED Examples', examples, definition.name);
     }
 
-    while (true) {
-      for (item in definitions) {
-        result = match(definition, definitions[item]);
+    l = definition_set.length;
+    for (i = 0; i < l; i++) {
+      definition_item = definition_set[i]
+      while (true) {
+        for (item in definitions) {
+          result = match(definition_item, definitions[item]);
 
-        if (result) {
+          if (result) {
+            break;
+          }
+        }
+        if (!parent || result) {
           break;
         }
+        definitions = getDefinitions();
+        parent = undefined;
       }
-      if (!parent || result) {
-        break;
+      // if definition matched
+      if (result) {
+        if (background) {
+          background_replaced = background;
+          if (definition_item.example) {
+            row = background.name;
+            for (j = 0; j < m; j++) {
+              key = headers[j];
+              value = definition_item.example[key];
+              row = row.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
+            }
+            background_replaced = JSON.parse(JSON.stringify(background));
+            background_replaced.name = row;
+            background_replaced.example = definition_item.example;
+          }
+          processDefinition(background_replaced);
+        }
+        describe(definition.name, function() {
+          applyDefinition(definition_item, result.definition, result.args);
+        });
       }
-      definitions = getDefinitions();
-      parent = undefined;
-    }
-    // if definitionFn found
-    if (result) {
-      if (background) {
-        processDefinition(background);
+      // If no definition matchet at all
+      else {
+        // TODO> make the standard format for this warning
+        // TODO> take in count the info given at definition.location
+        console.error(definition_item.type + ' not found "' + definition_item.name + '" at ' + definition_item.file.path);
       }
-      describe(definition.name, function() {
-        applyDefinition(definition, result.definition, result.args);
-      });
     }
-    // If no definition matchet at all
-    else {
-      // TODO> make the standard format for this warning
-      // TODO> take in count the info given at definition.location
-      console.error(definition.type + ' not found "' + definition.name + '" at ' + definition.file.path);
-    }
+
   }
 
   function run() {
@@ -376,37 +405,37 @@
 
   function feature(name, fn, thisArg) {
     fn.featureId = ++featureId;
-    return addDefinition(CONST_FEATURE, name, fn, thisArg);
+    return addDefinition(FEATURE, name, fn, thisArg);
   };
 
   function background(name, fn, thisArg) {
     fn.backgroundId = ++backgroundId;
-    return addDefinition(CONST_BACKGROUND, name, fn, thisArg);
+    return addDefinition(BACKGROUND, name, fn, thisArg);
   };
 
   function scenario(name, fn, thisArg) {
     fn.scenarioId = ++scenarioId;
-    return addDefinition(CONST_SCENARIO, name, fn, thisArg);
+    return addDefinition(SCENARIO, name, fn, thisArg);
   };
 
   function step(name, fn, thisArg) {
     fn.stepId = ++stepId;
-    return addDefinition(CONST_STEP, name, fn, thisArg);
+    return addDefinition(STEP, name, fn, thisArg);
   };
 
   function given(name, fn, thisArg) {
     fn.stepId = ++stepId;
-    return addDefinition(CONST_STEP, name, fn, thisArg);
+    return addDefinition(STEP, name, fn, thisArg);
   };
 
   function when(name, fn, thisArg) {
     fn.stepId = ++stepId;
-    return addDefinition(CONST_STEP, name, fn, thisArg);
+    return addDefinition(STEP, name, fn, thisArg);
   };
 
   function then(name, fn, thisArg) {
     fn.stepId = ++stepId;
-    return addDefinition(CONST_STEP, name, fn, thisArg);
+    return addDefinition(STEP, name, fn, thisArg);
   };
 
   return {
