@@ -131,7 +131,9 @@
     definition.fn.apply(definition.thisArg, args);
 
     if (feature.hasOwnProperty('background')) {
-      feature.background.file = feature.file;
+      if (feature.background) {
+        feature.background.file = feature.file;
+      }
       background = feature.background;
     }
     if (feature.hasOwnProperty('scenarioDefinitions')) {
