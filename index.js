@@ -128,6 +128,16 @@
     return result;
   }
 
+  function parseRow(row, headers) {
+    var m = row.cells.length,
+        result = {},
+        j;
+    for (j = 0; j < m; j++) {
+      result[headers[j]] = row.cells[j].value;
+    }
+    return result;
+  }
+
   /**
    * apply definition to describe()
    * @param {object} feature given from .feature
@@ -225,6 +235,9 @@
         item, args, definitionFn, result,
         row = step.text;
 
+    if (step.argument) {
+      console.log(step.argument);
+    }
     if (step.example) {
       row = applyRow(row, step.example);
     }
@@ -299,13 +312,10 @@
 
   function processDefinition(definition, background) {
     var definitions, item, args, result, parent = getParent(),
-        i, j, l, m, examples, headers, row, tableHeader, tableBody, tableRow,
-        key, value, definition_item, definition_replaced, background_replaced,
+        i, l, examples, headers, tableHeader, tableBody,
+        definition_item, definition_replaced, background_replaced,
         definition_set = [definition], background_set; 
 
-    //if (definition.example) {
-    //  console.log('the definition', definition, 'has example', definition.example);
-    //}
     if (parent) {
       definitions = parent.definitions;
     }
@@ -327,13 +337,7 @@
       }
       l = tableBody.length;
       for (i = 0; i < l; i++) {
-        tableRow = tableBody[i];
-        m = tableRow.cells.length;
-        row = {}
-        for (j = 0; j < m; j++) {
-          row[headers[j]] = tableRow.cells[j].value;
-        }
-        examples.push(row);
+        examples.push(parseRow(tableBody[i], headers));
       }
       for (i = 0; i < l; i++) {
         definition_replaced = JSON.parse(JSON.stringify(definition));
