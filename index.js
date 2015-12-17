@@ -255,24 +255,32 @@
       row = applyRow(row, step.example);
     }
     function enveloperAsync(done) {
-      args.push(dataTable);
+      if (dataTable) {
+        args.push(dataTable);
+      }
       args.push(done);
       definitionFn.apply(result.definition.thisArg, args);
     }
 
     function* coenveloperAsync(done) {
-      args.push(dataTable);
+      if (dataTable) {
+        args.push(dataTable);
+      }
       args.push(done);
       yield* definitionFn.apply(result.definition.thisArg, args);
     }
 
     function enveloper() {
-      args.push(dataTable);
+      if (dataTable) {
+        args.push(dataTable);
+      }
       definitionFn.apply(result.definition.thisArg, args);
     }
 
     function* coenveloper() {
-      args.push(dataTable);
+      if (dataTable) {
+        args.push(dataTable);
+      }
       yield* definitionFn.apply(result.definition.thisArg, args);
     }
 
