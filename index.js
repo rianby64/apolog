@@ -118,6 +118,16 @@
     featureId = backgroundId = scenarioId = stepId = 0;
   }
 
+  function applyRow(row, example) {
+    var result = row,
+        key, value;
+    for (key in example) {
+      value = example[key];
+      result = result.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
+    }
+    return result;
+  }
+
   /**
    * apply definition to describe()
    * @param {object} feature given from .feature
@@ -213,13 +223,10 @@
     var parent = getParent(),
         definitions = parent.definitions,
         item, args, definitionFn, result,
-        key, value, row = step.text;
+        row = step.text;
 
     if (step.example) {
-      for (key in step.example) {
-        value = step.example[key];
-        row = row.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
-      }
+      row = applyRow(row, step.example);
     }
     function enveloperAsync(done) {
       args.push(done); // TODO> is this enough? check the way to pass last arg to definitionFn
@@ -329,14 +336,8 @@
         examples.push(row);
       }
       for (i = 0; i < l; i++) {
-        row = definition.name;
-        for (j = 0; j < m; j++) {
-          key = headers[j];
-          value = examples[i][key];
-          row = row.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
-        }
         definition_replaced = JSON.parse(JSON.stringify(definition));
-        definition_replaced.name = row;
+        definition_replaced.name = applyRow(definition.name, examples[i]);
         definition_replaced.example = examples[i];
         definition_set.push(definition_replaced);
       }
@@ -364,13 +365,8 @@
         if (background) {
           background_replaced = background;
           if (definition_item.example) {
-            row = background.name;
-            for (key in definition_item.example) {
-              value = definition_item.example[key];
-              row = row.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
-            }
             background_replaced = JSON.parse(JSON.stringify(background));
-            background_replaced.name = row;
+            background_replaced.name = applyRow(background.name, definition_item.example);
             background_replaced.example = definition_item.example;
           }
           processDefinition(background_replaced);
