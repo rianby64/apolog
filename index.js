@@ -212,9 +212,15 @@
   function processStep(step) {
     var parent = getParent(),
         definitions = parent.definitions,
-        item, args, definitionFn, result;
+        item, args, definitionFn, result,
+        key, value, row = step.text;
 
-    //console.log("processing step", step);
+    if (step.example) {
+      for (key in step.example) {
+        value = step.example[key];
+        row = row.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
+      }
+    }
     function enveloperAsync(done) {
       args.push(done); // TODO> is this enough? check the way to pass last arg to definitionFn
       definitionFn.apply(result.definition.thisArg, args);
@@ -236,7 +242,7 @@
     // Search process
     while (true) {
       for (item in definitions) {
-        step.name = step.text;
+        step.name = row;
         result = match(step, definitions[item]);
 
         if (result) {
@@ -359,8 +365,7 @@
           background_replaced = background;
           if (definition_item.example) {
             row = background.name;
-            for (j = 0; j < m; j++) {
-              key = headers[j];
+            for (key in definition_item.example) {
               value = definition_item.example[key];
               row = row.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
             }
