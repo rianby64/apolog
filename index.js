@@ -132,8 +132,16 @@
     var m = row.cells.length,
         result = {},
         j;
+    if (!headers) {
+      result = [];
+    }
     for (j = 0; j < m; j++) {
-      result[headers[j]] = row.cells[j].value;
+      if (headers) {
+        result[headers[j]] = row.cells[j].value;
+      }
+      else {
+        result.push(row.cells[j].value);
+      }
     }
     return result;
   }
@@ -232,30 +240,39 @@
   function processStep(step) {
     var parent = getParent(),
         definitions = parent.definitions,
-        item, args, definitionFn, result,
-        row = step.text;
+        item, args, args_l, definitionFn, result,
+        row = step.text,
+        i, l, dataTable;
 
     if (step.argument) {
-      console.log(step.argument);
+      dataTable = [];
+      l = step.argument.rows.length;
+      for (i = 0; i < l; i++) {
+        dataTable.push(parseRow(step.argument.rows[i]));
+      }
     }
     if (step.example) {
       row = applyRow(row, step.example);
     }
     function enveloperAsync(done) {
-      args.push(done); // TODO> is this enough? check the way to pass last arg to definitionFn
+      args.push(dataTable);
+      args.push(done);
       definitionFn.apply(result.definition.thisArg, args);
     }
 
     function* coenveloperAsync(done) {
-      args.push(done); // TODO> is this enough? check the way to pass last arg to definitionFn
+      args.push(dataTable);
+      args.push(done);
       yield* definitionFn.apply(result.definition.thisArg, args);
     }
 
     function enveloper() {
+      args.push(dataTable);
       definitionFn.apply(result.definition.thisArg, args);
     }
 
     function* coenveloper() {
+      args.push(dataTable);
       yield* definitionFn.apply(result.definition.thisArg, args);
     }
 
@@ -284,7 +301,11 @@
     if (result) { // if definitionFn found
       definitionFn = result.definition.fn;
       args = result.args;
-      if (args.length < definitionFn.length) {
+      args_l = args.length;
+      if (dataTable) {
+        args_l++;
+      }
+      if (args_l < definitionFn.length) {
         if (isGeneratorFunction(definitionFn)) {
           it(step.text, coenveloperAsync);
         }
