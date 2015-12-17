@@ -404,7 +404,7 @@
           }
           processDefinition(background_replaced);
         }
-        describe(definition.name, function() {
+        describe(definition_item.name, function() {
           applyDefinition(definition_item, result.definition, result.args);
         });
       }
