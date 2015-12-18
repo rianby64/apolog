@@ -118,6 +118,14 @@
     featureId = backgroundId = scenarioId = stepId = 0;
   }
 
+  /**
+   * interpolates a row string that contains some <placeholders> with an example object
+   * e.g. row = "<placeholder1> <placeholder2>" and
+   *      example = { placeholder1: "value1", placeholder2: "value2" }
+   * then the result must be "value1 value2"
+   * @param {string} row is the text that contains some <placeholders>
+   * @param {object} example is the object that holds some <placeholders> as attributes
+   */
   function applyRow(row, example) {
     var result = row,
         key, value;
@@ -128,6 +136,12 @@
     return result;
   }
 
+  /**
+   * extracts from a (TableRow) row it's values
+   * and returns a value containing the values
+   * @param {object} row is the object TableRow from Gherkin3
+   * @param {object} headers is the optional param that describes each column name
+   */
   function parseRow(row, headers) {
     var m = row.cells.length,
         result = {},
