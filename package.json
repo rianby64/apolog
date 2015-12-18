@@ -16,7 +16,7 @@
   "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
   "main": "index.js",
   "scripts": {
-    "test": "karma start"
+    "test": "jasmine"
   },
   "keywords": [
     "Gherkin",
@@ -30,9 +30,6 @@
     "is-generator": "^1.0.2"
   },
   "devDependencies": {
-    "jasmine-core": "^2.3.4",
-    "karma": "^0.13.15",
-    "karma-chrome-launcher": "^0.2.1",
-    "karma-jasmine": "^0.3.6"
+    "jasmine": "^2.3.4"
   }
 }
