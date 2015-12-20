@@ -11,7 +11,7 @@ var apolog = require('../index.js'),
     };
 
 apolog.loadFeature(example.content, example.file);
-describe("it parsers a simple feature in a natural way", function() {
+describe("it parsers a simple feature", function() {
   var feature = 0,
       background = 0,
       background_given = 0,
@@ -38,37 +38,43 @@ describe("it parsers a simple feature in a natural way", function() {
           apolog.when('A when', functions.when);
           apolog.then('A step', functions.then);
         },
-        given: function() {
+        given: function(done) {
           given++;
+          done();
         },
-        when: function() {
+        when: function* () {
           when++;
+          yield {};
         },
-        then: function() {
+        then: function* (done) {
           then++;
+          // If you use async context with a generator* then the done param is undefined
+          // Sounds like "Rise Up". So, generator has higher priority than async
+          expect(done).toBe(undefined);
+          yield {};
         }
       };
   apolog.feature('Simple Feature', functions.feature);
   apolog.run();
-  it('the feature was called', function() {
+  it('so "feature" was called', function() {
     expect(feature).toBe(1);
   });
-  it('the background was called', function() {
+  it('so "background" was called', function() {
     expect(background).toBe(1);
   });
-  it('the background given step was called', function() {
+  it('so "background given" step was called as normal function', function() {
     expect(background_given).toBe(1);
   });
-  it('the scenario was called', function() {
+  it('so "scenario" was called', function() {
     expect(scenario).toBe(1);
   });
-  it('the given was called', function() {
+  it('so "given" was called as async function with done() parameter', function() {
     expect(given).toBe(1);
   });
-  it('the when was called', function() {
+  it('so "when" was called as a function*', function() {
     expect(when).toBe(1);
   });
-  it('the then was called', function() {
+  it('the then was called as async function* with done() === undefined parameter', function() {
     expect(then).toBe(1);
   });
 });
