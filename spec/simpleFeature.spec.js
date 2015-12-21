@@ -7,7 +7,7 @@ var apolog = require('../index.js'),
       file: {
         path: 'simpleFeature.feature'
       },
-      content: fs.readFileSync('./spec/simpleFeature.feature', 'utf8')
+      content: fs.readFileSync('./spec/features/simpleFeature.feature', 'utf8')
     };
 
 apolog.loadFeature(example.content, example.file);

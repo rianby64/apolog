@@ -1,0 +1,46 @@
+'use strict';
+// the next test are being performed by using the features from Apolog
+
+var apolog = require('../index.js'),
+    fs = require('fs'),
+    example = [{
+      file: {
+        path: 'customExecutionA.feature'
+      },
+      content: fs.readFileSync('./spec/features/customExecutionA.feature', 'utf8')
+    }, {
+      file: {
+        path: 'customExecutionB.feature'
+      },
+      content: fs.readFileSync('./spec/features/customExecutionB.feature', 'utf8')
+    }]
+
+apolog.loadFeature(example[0].content, example[0].file);
+apolog.loadFeature(example[1].content, example[1].file);
+describe("Custom nested execution for two features", function() {
+  var feature = 0,
+      scenario = 0,
+      given = 0,
+      when = 0,
+      then = 0;
+  
+  apolog.run();
+  it('so "feature" was called', function() {
+    expect(feature).toBe(1);
+  });
+  it('so "scenario" was called', function() {
+    expect(scenario).toBe(1);
+  });
+  it('so "given" was called as async function with done() parameter', function() {
+    expect(given).toBe(1);
+  });
+  it('so "when" was called as a function*', function() {
+    expect(when).toBe(1);
+  });
+  it('the then was called as async function* with done() === undefined parameter', function() {
+    expect(then).toBe(1);
+  });
+});
+
+
+
