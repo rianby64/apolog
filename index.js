@@ -172,7 +172,12 @@
 
     setParent(definition);
     // TODO> think about describe context being executed async
-    definition.fn.apply(definition.thisArg, args);
+    // TODO> think about throwing error
+    try {
+      definition.fn.apply(definition.thisArg, args);
+    } catch(e) {
+      throw new Error(e.message);
+    }
 
     if (feature.hasOwnProperty('background')) {
       if (feature.background) {
@@ -185,7 +190,11 @@
       l = items.length;
       for (i = 0; i < l; i++) {
         items[i].file = feature.file;
-        processDefinition(items[i], background);
+        try {
+          processDefinition(items[i], background);
+        } catch(e) {
+          throw new Error(e.message);
+        }
       }
     }
     else if (feature.hasOwnProperty('steps')) {
@@ -196,7 +205,11 @@
         if (feature.example) {
           items[i].example = feature.example;
         }
-        processStep(items[i]);
+        try {
+          processStep(items[i]);
+        } catch(e) {
+          throw new Error(e.message);
+        }
       }
     }
     
@@ -349,7 +362,7 @@
     else {
       // TODO> make the standard format for this warning
       // TODO> take in count the info given at definition.location
-      console.error(step.type + ' not found "' + step.name + '" at ' + step.file.path);
+      throw new Error(step.type + ' not found "' + step.name + '"', step.file.path);
     }
   }
 
@@ -357,7 +370,7 @@
     var definitions, item, args, result, parent = getParent(),
         i, l, examples, headers, tableHeader, tableBody,
         definition_item, definition_replaced, background_replaced,
-        definition_set = [definition], background_set; 
+        definition_set = [definition], background_set, throwed;
 
     if (parent) {
       definitions = parent.definitions;
@@ -416,17 +429,35 @@
             background_replaced.name = applyRow(background.name, definition_item.example);
             background_replaced.example = definition_item.example;
           }
-          processDefinition(background_replaced);
+          try {
+            processDefinition(background_replaced);
+          } catch(e) {
+            throw new Error(e.message);
+          }
         }
-        describe(definition_item.name, function() {
-          applyDefinition(definition_item, result.definition, result.args);
-        });
+        try {
+          throwed = {};
+          describe(definition_item.name, function() {
+            try {
+              applyDefinition(definition_item, result.definition, result.args);
+            } catch(e) {
+              throwed.message = e.message;
+              throw new Error(e.message);
+            }
+          });
+          if (throwed.message) {
+            throw new Error(throwed.message);
+          }
+        } catch(e) {
+          throw new Error(e.message);
+        }
+
       }
       // If no definition matchet at all
       else {
         // TODO> make the standard format for this warning
         // TODO> take in count the info given at definition.location
-        console.error(definition_item.type + ' not found "' + definition_item.name + '" at ' + definition_item.file.path);
+        throw new Error(definition_item.type + ' not found "' + definition_item.name + '"', definition_item.file.path);
       }
     }
 
@@ -438,7 +469,11 @@
         i;
 
     for (i = 0; i < l; i++) {
-      processDefinition(features[i]);
+      try {
+        processDefinition(features[i]);
+      } catch(e) {
+        throw new Error(e.message);
+      }
     }
     reset();
   }
