@@ -22,6 +22,15 @@ describe("Custom nested execution with", function() {
         execution_map.custom_execution_a.scenario_a.given.count++;
       });
     });
+    scenario("Scenario B", function() {
+      // TODO> write the execution_map
+      given("A given", function() {
+        // TODO> write the execution_map
+      });
+      when("An and", function() {
+        // TODO> write the execution_map
+      });
+    });
     when("A when", function() {
       execution_map.custom_execution_a.when = execution_map.custom_execution_a.when || { count: 0 };
       execution_map.custom_execution_a.when.count++;
@@ -37,6 +46,15 @@ describe("Custom nested execution with", function() {
       given("A given", function() {
         execution_map.custom_execution_b.scenario_a.given = execution_map.custom_execution_b.scenario_a.given || { count: 0 };
         execution_map.custom_execution_b.scenario_a.given.count++;
+      });
+    });
+    scenario("Scenario B", function() {
+      // TODO> write the execution_map
+      given("A given", function() {
+        // TODO> write the execution_map
+      });
+      when("An and", function() {
+        // TODO> write the execution_map
       });
     });
     when("A when", function() {
@@ -65,17 +83,19 @@ describe("Custom nested execution with", function() {
     expect(execution_map.custom_execution_a.count).toBe(1);
     expect(execution_map.custom_execution_a.scenario_a.count).toBe(1);
     expect(execution_map.custom_execution_a.scenario_a.given.count).toBe(1);
-    expect(execution_map.custom_execution_a.when.count).toBe(1);
+    expect(execution_map.custom_execution_a.when.count).toBe(2);
 
     expect(execution_map.custom_execution_b.count).toBe(1);
     expect(execution_map.custom_execution_b.scenario_a.count).toBe(1);
     expect(execution_map.custom_execution_b.scenario_a.given.count).toBe(1);
-    expect(execution_map.custom_execution_b.when.count).toBe(1);
+    expect(execution_map.custom_execution_b.when.count).toBe(2);
 
-    expect(execution_map.then.count).toBe(2);
+    expect(execution_map.then.count).toBe(4);
 
     expect(errors[0].message).toBe('Step not found "An and"');
     expect(errors[1].message).toBe('Step not found "An and"');
+
+    // TODO> write expectings for Scenario B
   });
 });
 
