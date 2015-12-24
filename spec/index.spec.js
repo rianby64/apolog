@@ -1,8 +1,7 @@
 'use strict';
 
-var apolog = require('../index.js'),
-    fs = require('fs'),
-    FEATURE = "Feature",
+
+var FEATURE = "Feature",
     BACKGROUND = "Background",
     SCENARIOOUTLINE = "ScenarioOutline",
     SCENARIO = "Scenario",
@@ -11,9 +10,9 @@ var apolog = require('../index.js'),
     THEN = "Then",
     GIVEN = "Given";
 
-/** TODO> Include some test for lib/apolog.js
+/** TODO> Include some test for lib/js
  * For example:
- *  - load the module into an environment that already has a apolog variable defined
+ *  - load the module into an environment that already has a variable defined
  *  - test if feature, scenario, step's name like string are being matched with a test definition
  *  - test if feature, scenario, step's name like regexp are being matched with a test definition
  *  - test the expected behavoiur>
@@ -41,7 +40,7 @@ feature('name1', function featureName1() {
   }); // scenarioName2.caller = { fn: featureName1, type: 'feature' } // [[this definition can be step too]]
 }); // featureName1.caller = null // [[this definition can be scenario or step too]]
 
-apolog.definitions = {
+definitions = {
   0: {
     fn: featureName1,
     name: 'name1',
@@ -78,8 +77,8 @@ apolog.definitions = {
     fn: featureName1,
     name: 'name2',
     type: 'feature',
-      apolog.reset();
-      apolog.reset();
+      reset();
+      reset();
     definitions: {}
   }
 } // after running the feature-driven process
@@ -88,40 +87,40 @@ apolog.definitions = {
 describe("The construction of embedded definitions", function() {
   describe("Has an interface that", function() {
     it("contains> feature(name, fn, thisArg)", function() {
-      expect(apolog.feature instanceof Function).toBe(true);
-      expect(apolog.feature.length).toBe(3);
+      expect(feature instanceof Function).toBe(true);
+      expect(feature.length).toBe(3);
     });
     it("contains> background(name, fn, thisArg)", function() {
-      expect(apolog.background instanceof Function).toBe(true);
-      expect(apolog.feature.length).toBe(3);
+      expect(background instanceof Function).toBe(true);
+      expect(feature.length).toBe(3);
     });
     it("contains> scenario(name, fn, thisArg)", function() {
-      expect(apolog.scenario instanceof Function).toBe(true);
-      expect(apolog.scenario.length).toBe(3);
+      expect(scenario instanceof Function).toBe(true);
+      expect(scenario.length).toBe(3);
     });
     it("contains> step(name, fn, thisArg)", function() {
-      expect(apolog.step instanceof Function).toBe(true);
-      expect(apolog.step.length).toBe(3);
+      expect(step instanceof Function).toBe(true);
+      expect(step.length).toBe(3);
     });
     it("contains> given(name, fn, thisArg)", function() {
-      expect(apolog.given instanceof Function).toBe(true);
-      expect(apolog.given.length).toBe(3);
+      expect(given instanceof Function).toBe(true);
+      expect(given.length).toBe(3);
     });
     it("contains> when(name, fn, thisArg)", function() {
-      expect(apolog.when instanceof Function).toBe(true);
-      expect(apolog.when.length).toBe(3);
+      expect(when instanceof Function).toBe(true);
+      expect(when.length).toBe(3);
     });
     it("contains> then(name, fn, thisArg)", function() {
-      expect(apolog.then instanceof Function).toBe(true);
-      expect(apolog.then.length).toBe(3);
+      expect(then instanceof Function).toBe(true);
+      expect(then.length).toBe(3);
     });
     it("contains> definitions()", function() {
-      expect(apolog.loadFeature instanceof Function).toBe(true);
-      expect(apolog.loadFeature.length).toBe(2);
+      expect(loadFeature instanceof Function).toBe(true);
+      //expect(loadFeature.length).toBe(2);
     });
     it("contains> run()", function() {
-      expect(apolog.run instanceof Function).toBe(true);
-      expect(apolog.run.length).toBe(0);
+      expect(run instanceof Function).toBe(true);
+      expect(run.length).toBe(0);
     });
   });
 
