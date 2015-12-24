@@ -27,7 +27,7 @@ loadFeature(example[1].content, example[1].file);
 
 describe("Custom nested execution for two features", function() {
 
-  var execution_map = {};
+  var execution_map = {}, errors;
   feature("Custom Execution A", function() {
     execution_map.custom_execution_a = execution_map.custom_execution_a || { count: 0 };
     execution_map.custom_execution_a.count++;
@@ -35,13 +35,13 @@ describe("Custom nested execution for two features", function() {
       execution_map.custom_execution_a.scenario_a = execution_map.custom_execution_a.scenario_a || { count: 0 };
       execution_map.custom_execution_a.scenario_a.count++;
       given("A given", function() {
-        //execution_map.custom_execution_a.scenario_a.given = execution_map.custom_execution_a.scenario_a.given || { count: 0 };
-        //execution_map.custom_execution_a.scenario_a.given.count++;
+        execution_map.custom_execution_a.scenario_a.given = execution_map.custom_execution_a.scenario_a.given || { count: 0 };
+        execution_map.custom_execution_a.scenario_a.given.count++;
       });
     });
     when("A when", function() {
-      //execution_map.custom_execution_a.when = execution_map.custom_execution_a.when || { count: 0 };
-      //execution_map.custom_execution_a.when.count++;
+      execution_map.custom_execution_a.when = execution_map.custom_execution_a.when || { count: 0 };
+      execution_map.custom_execution_a.when.count++;
     });
   });
 
@@ -52,13 +52,13 @@ describe("Custom nested execution for two features", function() {
       execution_map.custom_execution_b.scenario_a = execution_map.custom_execution_b.scenario_a || { count: 0 };
       execution_map.custom_execution_b.scenario_a.count++;
       given("A given", function() {
-        //execution_map.custom_execution_b.scenario_a.given = execution_map.custom_execution_b.scenario_a.given || { count: 0 };
-        //execution_map.custom_execution_b.scenario_a.given.count++;
+        execution_map.custom_execution_b.scenario_a.given = execution_map.custom_execution_b.scenario_a.given || { count: 0 };
+        execution_map.custom_execution_b.scenario_a.given.count++;
       });
     });
     when("A when", function() {
-      //execution_map.custom_execution_b.when = execution_map.custom_execution_b.when || { count: 0 };
-      //execution_map.custom_execution_b.when.count++;
+      execution_map.custom_execution_b.when = execution_map.custom_execution_b.when || { count: 0 };
+      execution_map.custom_execution_b.when.count++;
     });
   });
 
@@ -66,23 +66,23 @@ describe("Custom nested execution for two features", function() {
     execution_map.scenario_a = execution_map.scenario_a || { count: 0 };
     execution_map.scenario_a.count++;
     when("An and", function() {
-      //execution_map.scenario_a.and = execution_map.scenario_a.and || { count: 0 };
-      //execution_map.scenario_a.and.count++;
+      execution_map.scenario_a.and = execution_map.scenario_a.and || { count: 0 };
+      execution_map.scenario_a.and.count++;
     });
   });
   
   then("A step", function() {
-    //execution_map.then = execution_map.then || { count: 0 };
-    //execution_map.then.count++;
+    execution_map.then = execution_map.then || { count: 0 };
+    execution_map.then.count++;
   });
 
-  it('runs with errors', function() {
-    expect(run).toThrowError("Step not found \"An and\"");
-  });
+  errors = run();
 
   it('Scenario C is visible for both Features', function() {
-    expect(execution_map.custom_execution_a.count).toBe(2);
-    expect(execution_map.custom_execution_a.scenario_a.count).toBe(2);
+    expect(execution_map.custom_execution_a.count).toBe(1);
+    expect(execution_map.custom_execution_b.count).toBe(1);
+    expect(execution_map.custom_execution_a.scenario_a.count).toBe(1);
+    expect(execution_map.custom_execution_b.scenario_a.count).toBe(1);
   });
 });
 

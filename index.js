@@ -167,17 +167,12 @@
    * @param {array} args given by matching feature.name with definitionFn.regExp
    */
   function applyDefinition(feature, definition, args) {
-    var items, i, l, background,
+    var items, i, l, background, errors = [], result,
         currentParent = getParent();
 
     setParent(definition);
     // TODO> think about describe context being executed async
-    // TODO> think about throwing error
-    try {
-      definition.fn.apply(definition.thisArg, args);
-    } catch(e) {
-      throw new Error(e.message);
-    }
+    definition.fn.apply(definition.thisArg, args);
 
     if (feature.hasOwnProperty('background')) {
       if (feature.background) {
@@ -190,10 +185,10 @@
       l = items.length;
       for (i = 0; i < l; i++) {
         items[i].file = feature.file;
-        try {
-          processDefinition(items[i], background);
-        } catch(e) {
-          throw new Error(e.message);
+        result = processDefinition(items[i], background);
+        if (result) {
+          result.unshift(errors.length, 0);
+          Array.prototype.splice.apply(errors, result);
         }
       }
     }
@@ -205,15 +200,17 @@
         if (feature.example) {
           items[i].example = feature.example;
         }
-        try {
-          processStep(items[i]);
-        } catch(e) {
-          throw new Error(e.message);
+        result = processStep(items[i]);
+        if (result) {
+          errors.push(result);
         }
       }
     }
     
     setParent(currentParent);
+    if (errors.length > 0) {
+      return errors;
+    }
   }
 
   /**
@@ -252,7 +249,7 @@
     }
     // show error if nothing was found
     else {
-      console.error('undefined type to identify the ' + feature.type + '"' + feature.name + '"' + ". This should be a regexp or an string object");
+      return new Error('undefined type to identify the ' + feature.type + '"' + feature.name + '"' + ". This should be a regexp or an string object");
     }
 
     if (result) {
@@ -362,15 +359,15 @@
     else {
       // TODO> make the standard format for this warning
       // TODO> take in count the info given at definition.location
-      throw new Error(step.type + ' not found "' + step.name + '"', step.file.path);
+      return new Error(step.type + ' not found "' + step.name + '"', step.file.path);
     }
   }
 
   function processDefinition(definition, background) {
-    var definitions, item, args, result, parent = getParent(),
+    var definitions, item, args, found, parent = getParent(),
         i, l, examples, headers, tableHeader, tableBody,
         definition_item, definition_replaced, background_replaced,
-        definition_set = [definition], background_set, throwed;
+        definition_set = [definition], background_set, errors = [], result;
 
     if (parent) {
       definitions = parent.definitions;
@@ -408,20 +405,20 @@
       definition_item = definition_set[i]
       while (true) {
         for (item in definitions) {
-          result = match(definition_item, definitions[item]);
+          found = match(definition_item, definitions[item]);
 
-          if (result) {
+          if (found) {
             break;
           }
         }
-        if (!parent || result) {
+        if (!parent || found) {
           break;
         }
         definitions = getDefinitions();
         parent = undefined;
       }
       // if definition matched
-      if (result) {
+      if (found) {
         if (background) {
           background_replaced = background;
           if (definition_item.example) {
@@ -429,53 +426,46 @@
             background_replaced.name = applyRow(background.name, definition_item.example);
             background_replaced.example = definition_item.example;
           }
-          try {
-            processDefinition(background_replaced);
-          } catch(e) {
-            throw new Error(e.message);
+          result = processDefinition(background_replaced);
+          if (result) {
+            result.unshift(errors.length, 0);
+            Array.prototype.splice.apply(errors, result);
           }
         }
-        try {
-          throwed = {};
-          describe(definition_item.name, function() {
-            try {
-              applyDefinition(definition_item, result.definition, result.args);
-            } catch(e) {
-              throwed.message = e.message;
-              throw new Error(e.message);
-            }
-          });
-          if (throwed.message) {
-            throw new Error(throwed.message);
+        describe(definition_item.name, function() {
+          result = applyDefinition(definition_item, found.definition, found.args);
+          if (result) {
+            result.unshift(errors.length, 0);
+            Array.prototype.splice.apply(errors, result);
           }
-        } catch(e) {
-          throw new Error(e.message);
-        }
-
+        });
       }
       // If no definition matchet at all
       else {
         // TODO> make the standard format for this warning
         // TODO> take in count the info given at definition.location
-        throw new Error(definition_item.type + ' not found "' + definition_item.name + '"', definition_item.file.path);
+        return new Error(definition_item.type + ' not found "' + definition_item.name + '"', definition_item.file.path);
       }
     }
-
+    if (errors.length > 0) {
+      return errors;
+    }
   }
 
   function run() {
     var features = getFeatures(),
         l = features.length,
-        i;
+        i, errors = [], result;
 
     for (i = 0; i < l; i++) {
-      try {
-        processDefinition(features[i]);
-      } catch(e) {
-        throw new Error(e.message);
+      result = processDefinition(features[i]);
+      if (result) {
+        result.unshift(errors.length, 0);
+        Array.prototype.splice.apply(errors, result);
       }
     }
     reset();
+    return errors;
   }
 
   function loadFeature(feature, file) {
