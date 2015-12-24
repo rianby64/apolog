@@ -22,10 +22,8 @@ var apolog = require('../index.js'),
       content: fs.readFileSync('./spec/features/customExecutionB.feature', 'utf8')
     }]
 
-
 describe("Custom nested execution for two features", function() {
   var execution_map = {}, errors;
-
   loadFeature(example[0].content, example[0].file);
   loadFeature(example[1].content, example[1].file);
 
@@ -96,6 +94,4 @@ describe("Custom nested execution for two features", function() {
     expect(errors[1].message).toBe('Step not found "An and"');
   });
 });
-
-
 

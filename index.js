@@ -187,8 +187,13 @@
         items[i].file = feature.file;
         result = processDefinition(items[i], background);
         if (result) {
-          result.unshift(errors.length, 0);
-          Array.prototype.splice.apply(errors, result);
+          if (result instanceof Error) {
+            errors.push(result);
+          }
+          else {
+            result.unshift(errors.length, 0);
+            Array.prototype.splice.apply(errors, result);
+          }
         }
       }
     }
@@ -460,8 +465,13 @@
     for (i = 0; i < l; i++) {
       result = processDefinition(features[i]);
       if (result) {
-        result.unshift(errors.length, 0);
-        Array.prototype.splice.apply(errors, result);
+        if (result instanceof Error) {
+          errors.push(result);
+        }
+        else {
+          result.unshift(errors.length, 0);
+          Array.prototype.splice.apply(errors, result);
+        }
       }
     }
     reset();
