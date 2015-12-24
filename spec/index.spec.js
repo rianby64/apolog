@@ -1,15 +1,5 @@
 'use strict';
 
-
-var FEATURE = "Feature",
-    BACKGROUND = "Background",
-    SCENARIOOUTLINE = "ScenarioOutline",
-    SCENARIO = "Scenario",
-    STEP = "Step",
-    WHEN = "When",
-    THEN = "Then",
-    GIVEN = "Given";
-
 /** TODO> Include some test for lib/js
  * For example:
  *  - load the module into an environment that already has a variable defined
