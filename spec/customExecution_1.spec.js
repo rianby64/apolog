@@ -5,13 +5,13 @@ var example = [
       './spec/features/customExecutionB.feature',
     ]
 
-describe("Custom nested execution with no features", function() {
+describe("Custom nested execution with", function() {
   var execution_map = {}, errors;
   loadFeature(example[0]);
   loadFeature(example[1]);
 
   errors = run();
-  it("found two errors", function() {
+  it("features not found", function() {
     expect(errors[0].message).toBe('Feature not found "Custom Execution A"');
     expect(errors[1].message).toBe('Feature not found "Custom Execution B"');
   });

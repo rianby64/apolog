@@ -1,31 +1,15 @@
 'use strict';
 // the next test are being performed by using the features from Apolog
 
-var apolog = require('../index.js'),
-    feature = apolog.feature,
-    scenario = apolog.scenario,
-    given = apolog.given,
-    when = apolog.when,
-    then = apolog.then,
-    loadFeature = apolog.loadFeature,
-    run = apolog.run,
-    fs = require('fs'),
-    example = [{
-      file: {
-        path: 'customExecutionA.feature'
-      },
-      content: fs.readFileSync('./spec/features/customExecutionA.feature', 'utf8')
-    }, {
-      file: {
-        path: 'customExecutionB.feature'
-      },
-      content: fs.readFileSync('./spec/features/customExecutionB.feature', 'utf8')
-    }]
+var example = [
+      './spec/features/customExecutionA.feature',
+      './spec/features/customExecutionB.feature'
+    ];
 
-describe("Custom nested execution for two features", function() {
+describe("Custom nested execution with", function() {
   var execution_map = {}, errors;
-  loadFeature(example[0].content, example[0].file);
-  loadFeature(example[1].content, example[1].file);
+  loadFeature(example[0]);
+  loadFeature(example[1]);
 
   feature("Custom Execution A", function() {
     execution_map.custom_execution_a = execution_map.custom_execution_a || { count: 0 };
@@ -77,7 +61,7 @@ describe("Custom nested execution for two features", function() {
 
   errors = run();
 
-  it('Scenario A cannot be overloaded outside of the feature', function() {
+  it('Scenario A that can not be overloaded outside the feature', function() {
     expect(execution_map.custom_execution_a.count).toBe(1);
     expect(execution_map.custom_execution_a.scenario_a.count).toBe(1);
     expect(execution_map.custom_execution_a.scenario_a.given.count).toBe(1);

@@ -5,7 +5,7 @@ var example = [
       './spec/features/customExecutionB.feature'
     ]
 
-describe("Custom nested execution with no features", function() {
+describe("Custom nested execution with", function() {
   var execution_map = {}, errors;
   loadFeature(example[0]);
   loadFeature(example[1]);
