@@ -235,21 +235,24 @@
     if (feature_type !== definition.type) {
       return;
     };
-    if (definition.name.constructor === RegExp) {
-      args = definition.name.exec(feature.name);
-      if (args) { // the given regexp seems to fit the feature.name
-        // seems that I need to study how to match strings to regexp
-        if (args[0] === feature.name) { // because here I do an strange comparison
-          args = args.slice(1); // and then eliminate the first element
-        }
-        result = definition;
-      }
-    }
     // just define the fn
-    else if (definition.name.constructor === String) {
+    if (definition.name.constructor === String) {
       if (definition.name === feature.name) {
         result = definition;
         args = [];
+      }
+    }
+    else if (definition.name.constructor === RegExp) {
+      args = feature.name.match(definition.name);
+      if (args) { // the given regexp seems to fit the feature.name
+        // seems that I need to study how to match strings to regexp
+        if (args[0] === args.input) { //feature.name) { // because here I do an strange comparison
+          args = args.slice(1); // and then eliminate the first element
+          result = definition;
+        }
+        else {
+          result = undefined;
+        }
       }
     }
     // show error if nothing was found
@@ -270,7 +273,7 @@
     var parent = getParent(),
         definitions = parent.definitions,
         item, args, args_l, definitionFn, result,
-        row = step.text,
+        resolved, max, row = step.text,
         i, l, dataTable;
 
     if (step.argument) {
@@ -315,11 +318,24 @@
 
     // Search process
     while (true) {
+      result = undefined;
+      resolved = {};
+      max = 0;
       for (item in definitions) {
         step.name = row;
         result = match(step, definitions[item]);
-
         if (result) {
+          resolved[result.args.length] = result;
+          if (max < result.args.length) {
+            max = result.args.length;
+          }
+        }
+      }
+      for (i = max; i >= 0; i--) {
+        if (resolved.hasOwnProperty(i)) {
+          result = resolved[i];
+        }
+        else {
           break;
         }
       }
