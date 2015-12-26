@@ -29,6 +29,7 @@ describe("Custom nested execution with", function() {
     expect(errors[1].message).toBe('Scenario not found "Scenario B"');
     expect(errors[2].message).toBe('Scenario not found "Scenario A"');
     expect(errors[3].message).toBe('Scenario not found "Scenario B"');
+    expect(errors.length).toBe(4);
   });
 });
 

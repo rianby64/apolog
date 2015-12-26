@@ -14,6 +14,7 @@ describe("Custom nested execution with", function() {
   it("features not found", function() {
     expect(errors[0].message).toBe('Feature not found "Custom Execution A"');
     expect(errors[1].message).toBe('Feature not found "Custom Execution B"');
+    expect(errors.length).toBe(2);
   });
 });
 

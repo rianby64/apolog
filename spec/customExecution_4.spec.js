@@ -84,7 +84,6 @@ describe("Custom nested execution with", function() {
   });
 
   errors = run();
-
   it('Scenario A that can not be overloaded outside the feature', function() {
     expect(execution_map.custom_execution_a.count).toBe(1);
     expect(execution_map.custom_execution_a.scenario_a.count).toBe(1);
@@ -109,6 +108,7 @@ describe("Custom nested execution with", function() {
 
     expect(errors[0].message).toBe('Step not found "An and"');
     expect(errors[1].message).toBe('Step not found "An and"');
+    expect(errors.length).toBe(2);
   });
 });
 

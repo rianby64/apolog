@@ -61,6 +61,7 @@ describe("Custom nested execution with", function() {
     expect(errors[13].message).toBe('Step not found "A when"');
     expect(errors[14].message).toBe('Step not found "An and"');
     expect(errors[15].message).toBe('Step not found "A step"');
+    expect(errors.length).toBe(16);
   });
 });
 
