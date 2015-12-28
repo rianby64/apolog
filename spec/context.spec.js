@@ -6,7 +6,7 @@ var example = [
       './spec/features/contextB.feature'
     ];
 
-describe("Custom nested execution with", function() {
+describe("Sharing context execution", function() {
   var execution_map = {}, errors;
   loadFeature(example[0]);
   loadFeature(example[1]);
@@ -42,7 +42,7 @@ describe("Custom nested execution with", function() {
   });
 
   errors = run();
-  it('Scenario A that can not be overloaded outside the feature', function() {
+  it('with a correct shared execution map', function() {
     var r = "ABABABAB";
     expect(execution_map.context.map).toBe("AB");
 
