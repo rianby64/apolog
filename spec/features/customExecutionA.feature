@@ -11,8 +11,3 @@ Feature: Custom Execution A
     And An and
     Then A step
 
-    #Scenario: Scenario C
-    #Given A given
-    #When A when
-    #And An and
-    #Then A step
