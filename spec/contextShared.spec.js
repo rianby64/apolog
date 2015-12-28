@@ -26,19 +26,19 @@ describe("Custom nested execution with", function() {
         execution_map.context.scenario.given = execution_map.context.scenario.given || { map: "" };
         execution_map.context.scenario.given.map += a + b;
       });
-      when(/A when ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
-        console.log(f, s, a, b, "A when");
-
-        execution_map.context.scenario.when = execution_map.context.scenario.when || { map: "" };
-        execution_map.context.scenario.when.map += a + b;
-      });
-      then(/An step ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
-        console.log(f, s, a, b, "An step");
-
-        execution_map.context.scenario.then = execution_map.context.scenario.then || { map: "" };
-        execution_map.context.scenario.then.map += a + b;
-      });
     });
+    when(/A when ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
+      console.log(f, a, b, "A when");
+
+      execution_map.context.when = execution_map.context.when || { map: "" };
+      execution_map.context.when.map += a + b;
+    });
+  });
+  then(/An step ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
+    console.log(a, b, "An step");
+
+    execution_map.then = execution_map.then || { map: "" };
+    execution_map.then.map += a + b;
   });
 
   errors = run();
@@ -49,8 +49,8 @@ describe("Custom nested execution with", function() {
     expect(execution_map.context.scenario.map).toBe("ABAB");
 
     expect(execution_map.context.scenario.given.map).toBe(r);
-    expect(execution_map.context.scenario.when.map).toBe(r);
-    expect(execution_map.context.scenario.then.map).toBe(r);
+    expect(execution_map.context.when.map).toBe(r);
+    expect(execution_map.then.map).toBe(r);
 
     expect(errors.length).toBe(0);
   });
