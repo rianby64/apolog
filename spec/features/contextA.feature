@@ -1,10 +1,10 @@
 Feature: Context A
   Scenario: Scenario A
-    Given A given A B
-    When A when A B
-    Then An step A B
+    Given A given C D
+    When A when E F
+    Then An step G H
 
   Scenario: Scenario B
-    Given A given A B
-    When A when A B
-    Then An step A B
+    Given A given I J
+    When A when K L
+    Then An step M N
