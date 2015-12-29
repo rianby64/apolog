@@ -24,10 +24,6 @@
       GIVEN = "Given",
       OPEN_PLACEHOLDER = "<",
       CLOSE_PLACEHOLDER = ">",
-      featureId = 0,
-      backgroundId = 0,
-      scenarioId = 0,
-      stepId = 0,
       _definitions = {},
       _features = [],
       _parent,
@@ -52,18 +48,12 @@
    */
   function addDefinition(type, name, fn, thisArg) {
     var definitions,
-        id,
         _thisArg = thisArg,
         parent = getParent();
 
     if ((type === FEATURE) || (type === SCENARIO) || (type === BACKGROUND)) {
       definitions = {};
     }
-
-    if (type === FEATURE) { id = fn.featureId; }
-    else if (type === SCENARIO) { id = fn.scenarioId; }
-    else if (type === BACKGROUND) { id = fn.backgroundId; }
-    else { id = fn.stepId; }
 
     // Inherits the thisArg context from parent
     if (!_thisArg && parent) {
@@ -76,24 +66,23 @@
 
     if (parent) {
       parent.definitions[lastId] = {
-        id: id,
         name: name,
         type: type,
         fn: fn,
         thisArg: _thisArg,
         parent: parent,
-        definitions: definitions
+        definitions: definitions,
+        executed: false 
       }
     }
     else {
       _definitions[lastId] = {
-        id: id,
         name: name,
         type: type,
         fn: fn,
         thisArg: _thisArg,
         parent: undefined,
-        definitions: definitions
+        definitions: definitions,
       }
     }
     lastId++;
@@ -115,7 +104,7 @@
     _definitions = {};
     _features = [];
     _parent = undefined;
-    featureId = backgroundId = scenarioId = stepId = 0;
+    lastId = 0;
   }
 
   /**
@@ -173,6 +162,13 @@
     setParent(definition);
     // TODO> think about describe context being executed async
     definition.fn.apply(definition.thisArg, args);
+
+    if (definition.type === FEATURE) {
+      definition.executed = true;
+      setParent(currentParent);
+      addDefinition(definition.type, definition.name, definition.fn, definition.thisArg);
+      setParent(definition);
+    }
 
     if (feature.hasOwnProperty('background')) {
       if (feature.background) {
@@ -234,7 +230,10 @@
 
     if (feature_type !== definition.type) {
       return;
-    };
+    }
+    if ((definition.type === FEATURE) && (definition.executed)) {
+      return;
+    }
     // just define the fn
     if (definition.name.constructor === String) {
       if (definition.name === feature.name) {
@@ -507,42 +506,35 @@
 
     _feature.file = file || {};
     addFeature(_feature);
-  };
+  }
 
   function feature(name, fn, thisArg) {
-    fn.featureId = ++featureId;
     return addDefinition(FEATURE, name, fn, thisArg);
-  };
+  }
 
   function background(name, fn, thisArg) {
-    fn.backgroundId = ++backgroundId;
     return addDefinition(BACKGROUND, name, fn, thisArg);
-  };
+  }
 
   function scenario(name, fn, thisArg) {
-    fn.scenarioId = ++scenarioId;
     return addDefinition(SCENARIO, name, fn, thisArg);
-  };
+  }
 
   function step(name, fn, thisArg) {
-    fn.stepId = ++stepId;
     return addDefinition(STEP, name, fn, thisArg);
-  };
+  }
 
   function given(name, fn, thisArg) {
-    fn.stepId = ++stepId;
     return addDefinition(STEP, name, fn, thisArg);
-  };
+  }
 
   function when(name, fn, thisArg) {
-    fn.stepId = ++stepId;
     return addDefinition(STEP, name, fn, thisArg);
-  };
+  }
 
   function then(name, fn, thisArg) {
-    fn.stepId = ++stepId;
     return addDefinition(STEP, name, fn, thisArg);
-  };
+  }
 
   return {
     feature: feature, 
