@@ -14,29 +14,20 @@ describe("Sharing context execution", function() {
   feature(/Context ([A-Za-z]+)/, function(f) {
     execution_map.context = execution_map.context || { map: "" };
     execution_map.context.map += f;
-    //console.log(f, "feature");
     scenario(/Scenario ([A-Za-z]+)/, function(s) {
-      //console.log(f, s, "scenario");
-
       execution_map.context.scenario = execution_map.context.scenario || { map: "" };
       execution_map.context.scenario.map += s;
       given(/A given ([A-Za-z]+) ([A-Za-z]+)/,  function(a, b) {
-        //console.log(f, s, a, b, "A given");
-
         execution_map.context.scenario.given = execution_map.context.scenario.given || { map: "" };
         execution_map.context.scenario.given.map += f + s + a + b + '.';
       });
     });
     when(/A when ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
-      //console.log(f, a, b, "A when");
-
       execution_map.context.when = execution_map.context.when || { map: "" };
       execution_map.context.when.map += f + a + b + '.';
     });
   });
   then(/An step ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
-    //console.log(a, b, "An step");
-
     execution_map.then = execution_map.then || { map: "" };
     execution_map.then.map += a + b + '.';
   });

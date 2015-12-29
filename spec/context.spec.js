@@ -14,27 +14,18 @@ describe("Sharing context execution", function() {
   feature(/Context ([A-Za-z]+)/, function(f) {
     execution_map.context = execution_map.context || { map: "" };
     execution_map.context.map += f;
-    //console.log(f, "feature");
     scenario(/Scenario ([A-Za-z]+)/, function(s) {
-      //console.log(f, s, "scenario");
-
       execution_map.context.scenario = execution_map.context.scenario || { map: "" };
       execution_map.context.scenario.map += s;
       given(/A given ([A-Za-z]+) ([A-Za-z]+)/,  function(a, b) {
-        //console.log(f, s, a, b, "A given");
-
         execution_map.context.scenario.given = execution_map.context.scenario.given || { map: "" };
         execution_map.context.scenario.given.map += f + s + a + b + ".";
       });
       when(/A when ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
-        //console.log(f, s, a, b, "A when");
-
         execution_map.context.scenario.when = execution_map.context.scenario.when || { map: "" };
         execution_map.context.scenario.when.map += f + s + a + b + ".";
       });
       then(/An step ([A-Za-z]+) ([A-Za-z]+)/, function(a, b) {
-        //console.log(f, s, a, b, "An step");
-
         execution_map.context.scenario.then = execution_map.context.scenario.then || { map: "" };
         execution_map.context.scenario.then.map += f + s + a + b + ".";
       });
