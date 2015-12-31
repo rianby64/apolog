@@ -275,6 +275,27 @@
         resolved, max, row = step.text,
         i, l, dataTable;
 
+    function extendParams(done) {
+      var i, l = definitionFn.length;
+      if (dataTable) {
+        l--;
+      }
+      if (done) {
+        l--;
+      }
+
+      for (i = args.length; i < l; i++) {
+        args.push(undefined);
+      }
+
+      if (dataTable) {
+        args.push(dataTable);
+      }
+      if (done) {
+        args.push(done);
+      }
+    }
+
     if (step.argument) {
       dataTable = [];
       l = step.argument.rows.length;
@@ -285,33 +306,24 @@
     if (step.example) {
       row = applyRow(row, step.example);
     }
+
     function enveloperAsync(done) {
-      if (dataTable) {
-        args.push(dataTable);
-      }
-      args.push(done);
+      extendParams(done);
       definitionFn.apply(result.definition.thisArg, args);
     }
 
     function* coenveloperAsync(done) {
-      if (dataTable) {
-        args.push(dataTable);
-      }
-      args.push(done);
+      extendParams(done);
       yield* definitionFn.apply(result.definition.thisArg, args);
     }
 
     function enveloper() {
-      if (dataTable) {
-        args.push(dataTable);
-      }
+      extendParams();
       definitionFn.apply(result.definition.thisArg, args);
     }
 
     function* coenveloper() {
-      if (dataTable) {
-        args.push(dataTable);
-      }
+      extendParams();
       yield* definitionFn.apply(result.definition.thisArg, args);
     }
 
@@ -359,18 +371,18 @@
       }
       if (args_l < definitionFn.length) {
         if (isGeneratorFunction(definitionFn)) {
-          it(step.text, coenveloperAsync);
+          it(row, coenveloperAsync);
         }
         else {
-          it(step.text, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
+          it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
         }
       }
       else {
         if (isGeneratorFunction(definitionFn)) {
-          it(step.text, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
+          it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
         }
         else {
-          it(step.text, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
+          it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
         }
       }
       return;
@@ -379,7 +391,7 @@
     else {
       // TODO> make the standard format for this warning
       // TODO> take in count the info given at definition.location
-      return new Error(step.type + ' not found "' + step.name + '"', step.file.path);
+      return new Error(step.type + ' not found "' + row + '"', step.file.path);
     }
   }
 
