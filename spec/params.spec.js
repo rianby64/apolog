@@ -13,8 +13,17 @@ describe("it parsers a simple feature", function() {
     background(/A background/, function background() {
       execution_map.background = execution_map.background || { count: 0 };
       execution_map.background.count++;
-      
-      given(/a given background ([0-9a-zA-Z]+)/, function given_background(param) {
+
+      given(/a given background ([0-9a-zA-Z]+)/, function given_background(param, table) {
+        var expect_table = [
+          [ 'x1', 'x2', 'x3' ],
+          [ 'y1', 'y2', 'y3' ],
+          [ 'z1', 'z2', 'z3' ]
+        ];
+        expect(param).toMatch(/x[0-9]/);
+        expect_table.forEach(function(item, i) {
+          expect(table[i]).toEqual(jasmine.arrayContaining(item));
+        });
         execution_map.background_given = execution_map.background_given || { count: 0 };
         execution_map.background_given.count++;
       });
@@ -30,7 +39,13 @@ describe("it parsers a simple feature", function() {
     });
 
     given(/A given ([0-9a-zA-Z]+)/, function given(param, table, done) {
-      //console.log('a given', param, table, done);
+      expect(param).toMatch(/x[0-9]/);
+      if (param === "x3") {
+        expect(table).toBeUndefined();
+      }
+      else {
+        expect(table).toEqual(jasmine.arrayContaining(['m1', 'm2', 'm3']));
+      }
       execution_map.given = execution_map.given || { count: 0 };
       execution_map.given.count++;
       done();

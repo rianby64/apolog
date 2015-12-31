@@ -10,12 +10,13 @@ Feature: Testing parameters
       | m1 | m2 | m3 |
     When A when <param3>
     Then A step <param1>
-      | m1 | m1 | m1 |
+      | m1 | m2 | m3 |
+      | n1 | n2 | n3 |
 
     Examples:
       | param1 | param2 | param3 |
-      |  abc   |  123   |  xyz   |
-      |  ijk   |  456   |  pqr   |
+      |  abc   |   x1   |  xyz   |
+      |  ijk   |   x2   |  pqr   |
 
   Scenario Outline: Another scenario <paramX>
     Given A given <param2>
@@ -24,4 +25,4 @@ Feature: Testing parameters
 
     Examples:
       | param2 | paramX |
-      |   x1   |   y1   |
+      |   x3   |   y1   |

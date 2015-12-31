@@ -302,6 +302,9 @@
       for (i = 0; i < l; i++) {
         dataTable.push(parseRow(step.argument.rows[i]));
       }
+      if (dataTable.length == 1) {
+        dataTable = dataTable[0];
+      }
     }
     if (step.example) {
       row = applyRow(row, step.example);
