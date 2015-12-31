@@ -3,7 +3,8 @@
 
 loadFeature('./spec/features/simpleFeature.feature');
 describe("it parsers a simple feature", function() {
-  var execution_map = {};
+  var execution_map = {},
+      errors;
 
   feature('Simple Feature', function feature() {
     execution_map.feature = execution_map.feature || { count: 0 };
@@ -43,18 +44,29 @@ describe("it parsers a simple feature", function() {
         yield {};
       });
     });
+    scenario('Another scenario', function() {
+      given('another given', function() {
+
+      });
+      when('another when', function() {
+
+      });
+      then('another step', function() {
+
+      });
+    });
   });
 
-  run();
+  errors = run();
 
   it('so "feature" was called', function() {
     expect(execution_map.feature.count).toBe(1);
   });
   it('so "background" was called', function() {
-    expect(execution_map.background.count).toBe(1);
+    expect(execution_map.background.count).toBe(2);
   });
   it('so "background given" step was called as normal function', function() {
-    expect(execution_map.background_given.count).toBe(1);
+    expect(execution_map.background_given.count).toBe(2);
   });
   it('so "scenario" was called', function() {
     expect(execution_map.scenario.count).toBe(1);
@@ -67,6 +79,9 @@ describe("it parsers a simple feature", function() {
   });
   it('the then was called as async function* with done() === undefined parameter', function() {
     expect(execution_map.then.count).toBe(1);
+  });
+  it('running without errors', function() {
+    expect(errors.length).toBe(0);
   });
 });
 
