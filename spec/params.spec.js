@@ -50,21 +50,28 @@ describe("it parsers a simple feature", function() {
       execution_map.given.count++;
       done();
     });
-    when(/A when ([0-9a-zA-Z]+)/, function when() {
+    when(/A when ([0-9a-zA-Z]+) ([0-9a-zA-Z]+)/, function when(param1, param2) {
       execution_map.when = execution_map.when || { count: 0 };
       execution_map.when.count++;
     });
-    then(/A step ([0-9a-zA-Z]+)/, function* then() {
+    then(/A step ([0-9a-zA-Z]+)/, function then(param1, param2, param3, table, done) {
+      var expect_table = [[ 'm1', 'm2', 'm3' ], [ 'n1', 'n2', 'n3' ]];
+      if (table) {
+        expect_table.forEach(function(item, i) {
+          expect(table[i]).toEqual(jasmine.arrayContaining(item));
+        });
+      }
+      
+      expect(param2).toBeUndefined();
+      expect(param3).toBeUndefined();
+
       execution_map.then = execution_map.then || { count: 0 };
       execution_map.then.count++;
-      yield {};
+      done();
     });
   });
 
   errors = run();
-  if (errors.length) {
-    errors.forEach(function(item) { throw item; });
-  }
 
   /*
   it('so "feature" was called', function() {
