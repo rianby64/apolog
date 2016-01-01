@@ -16,7 +16,8 @@
   "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "devel": "jasmine && chokidar 'index.js' 'spec/**/*.js' 'spec/**/*.feature' -c 'jasmine'"
   },
   "keywords": [
     "Gherkin",
@@ -27,10 +28,11 @@
   "license": "ISC",
   "dependencies": {
     "gherkin": "latest",
-    "is-generator": "latest",
-    "jasmine-co": "latest"
+    "is-generator": "latest"
   },
   "devDependencies": {
-    "jasmine": "latest"
+    "chokidar-cli": "^1.2.0",
+    "jasmine": "latest",
+    "jasmine-co": "latest"
   }
 }
