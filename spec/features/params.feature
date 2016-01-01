@@ -9,6 +9,7 @@ Feature: Testing parameters
     Given A given <param2>
       | m1 | m2 | m3 |
     When A when <param3> <param2>
+      | a | b | c |
     Then A step <param1>
       | m1 | m2 | m3 |
       | n1 | n2 | n3 |
@@ -21,6 +22,7 @@ Feature: Testing parameters
   Scenario Outline: Another scenario <paramX>
     Given A given <param2>
     When A when <paramX> <param2>
+      | a | b | c |
     Then A step <param2>
 
     Examples:
