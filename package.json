@@ -12,7 +12,7 @@
   },
   "homepage": "https://github.com/rianby64/apolog#readme",
   "name": "apolog",
-  "version": "0.0.3a",
+  "version": "0.0.4",
   "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
   "main": "index.js",
   "scripts": {
@@ -27,12 +27,12 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "gherkin": "latest",
-    "is-generator": "latest"
+    "gherkin": "^3.1.2",
+    "is-generator": "^1.0.2"
   },
   "devDependencies": {
     "chokidar-cli": "^1.2.0",
-    "jasmine": "latest",
-    "jasmine-co": "latest"
+    "jasmine": "^2.4.1",
+    "jasmine-co": "^1.1.0"
   }
 }
