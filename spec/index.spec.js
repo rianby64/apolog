@@ -2,16 +2,8 @@
 
 /** TODO> Include some test for lib/js
  * For example:
- *  - load the module into an environment that already has a variable defined
- *  - test if feature, scenario, step's name like string are being matched with a test definition
- *  - test if feature, scenario, step's name like regexp are being matched with a test definition
- *  - test the expected behavoiur>
- *     if a feature(...) contains an scenario and in another place an scenario was written as stand-alone definition
- *     then the stand-alone definition becomes a global definition and the scenario inside the feature belongs
- *     to the feature
  *  - do not accept recursive features, scenarios nor steps!
  */
-
 
 /**
  * One added a Definition must know who is calling it, and when the runner is the caller then its parent is null
@@ -29,51 +21,8 @@ feature('name1', function featureName1() {
     }); // stepName3.caller = { fn: scenarioName2, type: 'scenario' }
   }); // scenarioName2.caller = { fn: featureName1, type: 'feature' } // [[this definition can be step too]]
 }); // featureName1.caller = null // [[this definition can be scenario or step too]]
-
-definitions = {
-  0: {
-    fn: featureName1,
-    name: 'name1',
-    type: 'feature',
-    definitions: {
-      0: {
-        fn: scenarioName1,
-        name: 'name1',
-        type: 'scenario',
-        definitions: {
-          0: {
-            fn: stepName1,
-            name: 'name1',
-            type: 'step'
-            // definitions is undefined
-          },
-          1: {
-            fn: stepName2,
-            name: 'name2',
-            type: 'step'
-            // definitions is undefined
-          }
-        }
-      },
-      1: {
-        fn: scenarioName1,
-        name: 'name1',
-        type: 'scenario',
-        definitions: {}
-      }
-    }
-  },
-  1: {
-    fn: featureName1,
-    name: 'name2',
-    type: 'feature',
-      reset();
-      reset();
-    definitions: {}
-  }
-} // after running the feature-driven process
- *
  */
+var apolog = require('../index.js');
 describe("The construction of embedded definitions", function() {
   describe("Has an interface that", function() {
     it("contains> feature(name, fn, thisArg)", function() {
@@ -105,8 +54,8 @@ describe("The construction of embedded definitions", function() {
       expect(then.length).toBe(3);
     });
     it("contains> definitions()", function() {
-      expect(loadFeature instanceof Function).toBe(true);
-      //expect(loadFeature.length).toBe(2);
+      expect(apolog.loadFeature instanceof Function).toBe(true);
+      expect(apolog.loadFeature.length).toBe(2);
     });
     it("contains> run()", function() {
       expect(run instanceof Function).toBe(true);
