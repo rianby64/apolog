@@ -59,7 +59,7 @@ describe("The construction of embedded definitions", function() {
     });
     it("contains> run()", function() {
       expect(run instanceof Function).toBe(true);
-      expect(run.length).toBe(0);
+      expect(run.length).toBe(1);
     });
   });
 
