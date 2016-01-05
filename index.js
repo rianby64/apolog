@@ -394,7 +394,7 @@
     else {
       // TODO> make the standard format for this warning
       // TODO> take in count the info given at definition.location
-      return new Error(step.type + ' not found "' + row + '"', step.file.path);
+      return new Error(step.keyword + 'not found "' + row + '"', step.file.path);
     }
   }
 
