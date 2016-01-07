@@ -19,9 +19,13 @@
       SCENARIOOUTLINE = "ScenarioOutline",
       BACKGROUND = "Background",
       STEP = "Step",
+      /*
       WHEN = "When",
       THEN = "Then",
       GIVEN = "Given",
+      AND = "And",
+      BUT = "But",
+      */
       OPEN_PLACEHOLDER = "<",
       CLOSE_PLACEHOLDER = ">",
       _definitions = {},
@@ -462,6 +466,11 @@
             background_replaced.example = definition_item.example;
           }
           result = processDefinition(background_replaced);
+          if (result instanceof Error) {
+            // TODO> make the standard format for this warning
+            // TODO> take in count the info given at definition.location
+            return new Error(background_replaced.type + ' not found "' + background_replaced.name + '"', background_replaced.file.path);
+          }
           if (result) {
             result.unshift(errors.length, 0);
             Array.prototype.splice.apply(errors, result);
@@ -561,6 +570,14 @@
     return addDefinition(STEP, name, fn, thisArg);
   }
 
+  function and(name, fn, thisArg) {
+    return addDefinition(STEP, name, fn, thisArg);
+  }
+
+  function but(name, fn, thisArg) {
+    return addDefinition(STEP, name, fn, thisArg);
+  }
+
   return {
     feature: feature, 
     background: background,
@@ -569,6 +586,8 @@
     given: given,
     when: when,
     then: then,
+    and: and,
+    but: but,
     loadFeature: loadFeature,
     run: run
   };
