@@ -106,8 +106,8 @@ describe("Custom nested execution with", function() {
     expect(execution_map.custom_execution_b.when.count).toBe(2);
     expect(execution_map.then.count).toBe(4);
 
-    expect(errors[0].message).toBe('Step not found "An and"');
-    expect(errors[1].message).toBe('Step not found "An and"');
+    expect(errors[0].message).toBe('And not found "An and"');
+    expect(errors[1].message).toBe('And not found "An and"');
     expect(errors.length).toBe(2);
   });
 });
