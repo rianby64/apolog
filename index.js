@@ -80,6 +80,9 @@
       }
     }
     else {
+      if ((type === BACKGROUND) && (name === undefined)) {
+        throw new Error("Can't define an unnamed background as general definition");
+      }
       _definitions[lastId] = {
         name: name,
         type: type,
@@ -275,6 +278,9 @@
     return;
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function processStep(step) {
     var parent = getParent(),
         definitions = parent.definitions,
@@ -405,6 +411,9 @@
     }
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function processDefinition(definition, background) {
     var definitions, item, args, found, parent = getParent(),
         i, l, examples, headers, tableHeader, tableBody,

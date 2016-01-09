@@ -1,5 +1,5 @@
-Feature: Feature D
-  Background: Background C
+Feature: Feature E
+  Background: Background
     Given a background
   Scenario Outline: Scene <name>
     Given a given
