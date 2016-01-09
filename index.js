@@ -536,7 +536,52 @@
     return addDefinition(FEATURE, name, fn, thisArg);
   }
 
-  function background(name, fn, thisArg) {
+  function background(nameOrFn, fnOrThisArg, thisArgOrUndefined) {
+    var name, fn, thisArg;
+    if (nameOrFn) {
+      if ((nameOrFn.constructor === String) || (nameOrFn.constructor === RegExp)) {
+        name = nameOrFn;
+      }
+      else if (nameOrFn.constructor === Function) {
+        name = undefined;
+        fn = nameOrFn;
+      }
+      else {
+        throw new Error("Incorrect name definition for background"); // TODO: Think about this error and how to show it
+      }
+    }
+    else {
+      throw new Error("Something was wrong");
+    }
+
+    if (fnOrThisArg) {
+      if (fnOrThisArg.constructor === Function) {
+        if (name === undefined) {
+          throw new Error("Incorrect fn definition> two functions?"); // TODO: see above
+        }
+        fn = fnOrThisArg;
+      }
+      else if (fnOrThisArg.constructor === Object) {
+        if (name !== undefined) {
+          throw new Error("Incorrect fn definition> where's the definition function?"); // TODO: see above
+        }
+        thisArg = fnOrThisArg;
+      }
+    }
+
+    if (thisArgOrUndefined) {
+      if (thisArgOrUndefined.constructor === Object) {
+        if (fn.constructor === Object) {
+          throw new Error("Incorrect fn definition> why two thisArgs?"); // TODO: see above
+        }
+        if ((fn.constructor === Function) && ((name.constructor === String) || (name.constructor === RegExp))) {
+          thisArg = thisArgOrUndefined;
+        }
+        else {
+          throw new Error("Read the documentation...");
+        }
+      }
+    }
     return addDefinition(BACKGROUND, name, fn, thisArg);
   }
 

@@ -28,30 +28,27 @@ describe("Sharing background execution", function() {
         execution_map.feature_a.map += "[g" + s + "]";
       });
     });
-  });
+ });
 
-  feature("Feature B", function() {
-    console.log('no puede ser...B');
-    execution_map.feature = execution_map.feature || { map: "" };
-    execution_map.feature.map += "B";
-    background(/Background/, function() {
+  feature(/Feature (B)/, function(f) {
+    execution_map.feature_b = execution_map.feature_b || { map: "" };
+    execution_map.feature_b.map += "[" + f + "]";
+    background(function() {
       given(/a background/, function() {
-
+        execution_map.feature_b.map += "[bg]";
       });
     });
     scenario(/Scene ([A-Za-z]+)/, function(s) {
+      execution_map.feature_b.map += s;
       given(/a given/,  function() {
+        execution_map.feature_b.map += "[g" + s + "]";
       });
     });
   });
 
   feature("Feature C", function() {
-    console.log('no puede ser...C');
-    execution_map.feature = execution_map.feature || { map: "" };
-    execution_map.feature.map += "C";
     background(/Background/, function() {
       given(/a background/, function() {
-
       });
     });
     scenario(/Scene ([A-Za-z]+)/, function(s) {
@@ -61,12 +58,8 @@ describe("Sharing background execution", function() {
   });
 
   feature("Feature D", function() {
-    console.log('no puede ser...D');
-    execution_map.feature = execution_map.feature || { map: "" };
-    execution_map.feature.map += "D";
     background(/Background/, function() {
       given(/a background/, function() {
-
       });
     });
     scenario(/Scene ([A-Za-z]+)/, function(s) {
@@ -78,6 +71,7 @@ describe("Sharing background execution", function() {
   errors = run();
   it('with a correct shared execution map', function() {
     expect(execution_map.feature_a.map).toBe("[A]ABC[bg][gA][bg][gB][bg][gC]");
+    expect(execution_map.feature_b.map).toBe("[B]ABC[bg][gA][bg][gB][bg][gC]");
     /*
     expect(execution_map.feature.scenario.when.map).toBe("AAEF.ABKL.BAQR.BBWX.");
     expect(execution_map.feature.scenario.then.map).toBe("AAGH.ABMN.BAST.BBYZ.");
