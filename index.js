@@ -517,10 +517,15 @@
     if (config.reset) {
       reset();
     }
-    if (config.showError) {
+    if ((config.throwError) || (config.showError)) {
       if (errors.length) {
         errors.forEach(function(item) {
-          throw item;
+          if (config.throwError) {
+            throw item;
+          }
+          else if (config.showError) {
+            console.error(item.message);
+          }
         });
       }
     }
