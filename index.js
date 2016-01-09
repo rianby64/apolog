@@ -238,8 +238,12 @@
     if ((definition.type === FEATURE) && (definition.executed)) {
       return;
     }
-    // just define the fn
-    if (definition.name.constructor === String) {
+
+    if ((definition.name === undefined) && (definition.type === BACKGROUND)) {
+      result = definition;
+      args = [];
+    }
+    else if (definition.name.constructor === String) {
       if (definition.name === feature.name) {
         result = definition;
         args = [];
@@ -258,7 +262,6 @@
         }
       }
     }
-    // show error if nothing was found
     else {
       return new Error('undefined type to identify the ' + feature.type + '"' + feature.name + '"' + ". This should be a regexp or an string object");
     }
