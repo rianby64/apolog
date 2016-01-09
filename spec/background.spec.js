@@ -28,7 +28,7 @@ describe("Sharing background execution", function() {
         execution_map.feature_a.map += "[g" + s + "]";
       });
     });
- });
+  });
 
   feature(/Feature (B)/, function(f) {
     execution_map.feature_b = execution_map.feature_b || { map: "" };
@@ -46,13 +46,18 @@ describe("Sharing background execution", function() {
     });
   });
 
-  feature("Feature C", function() {
-    background(/Background/, function() {
-      given(/a background/, function() {
-      });
+  background(/Background C/, function() {
+    given(/a background/, function() {
+      execution_map.feature_c.map += "[bg]";
     });
+  });
+  feature(/Feature (C)/, function(f) {
+    execution_map.feature_c = execution_map.feature_c || { map: "" };
+    execution_map.feature_c.map += "[" + f + "]";
     scenario(/Scene ([A-Za-z]+)/, function(s) {
+      execution_map.feature_c.map += s;
       given(/a given/,  function() {
+        execution_map.feature_c.map += "[g" + s + "]";
       });
     });
   });
@@ -72,10 +77,7 @@ describe("Sharing background execution", function() {
   it('with a correct shared execution map', function() {
     expect(execution_map.feature_a.map).toBe("[A]ABC[bg][gA][bg][gB][bg][gC]");
     expect(execution_map.feature_b.map).toBe("[B]ABC[bg][gA][bg][gB][bg][gC]");
-    /*
-    expect(execution_map.feature.scenario.when.map).toBe("AAEF.ABKL.BAQR.BBWX.");
-    expect(execution_map.feature.scenario.then.map).toBe("AAGH.ABMN.BAST.BBYZ.");
-    */
+    expect(execution_map.feature_c.map).toBe("[C]ABC[bg][gA][bg][gB][bg][gC]");
     expect(errors.length).toBe(0);
   });
 });
