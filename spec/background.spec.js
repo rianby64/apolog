@@ -81,7 +81,7 @@ describe("Sharing background execution", function() {
 
   // TODO: How to test that this definition throws an Error?
   //background(function() {
-    // this should be an error
+  //  this should be an error
   //});
 
   feature(/Feature (E)/, function(f) {
@@ -92,12 +92,19 @@ describe("Sharing background execution", function() {
         execution_map.feature_e.map += "[bgD]";
       });
     });
-    background(function() {
-      given(/a background/, function() {
-        execution_map.feature_e.map += "[bg]";
-      });
-    });
+    // TODO: How to test that this definition throws an Error?
+    //background(function() {
+    //  given(/a background/, function() {
+    //    execution_map.feature_e.map += "[bg]";
+    //  });
+    //});
     scenario(/Scene ([A-Za-z]+)/, function(s) {
+      // TODO: How to test that this definition throws an Error?
+      //background(function() {
+      //  given(/a background/, function() {
+      //    execution_map.feature_e.map += "[bg]";
+      //  });
+      //});
       execution_map.feature_e.map += s;
       given(/a given/,  function() {
         execution_map.feature_e.map += "[g" + s + "]";

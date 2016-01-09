@@ -53,7 +53,8 @@
   function addDefinition(type, name, fn, thisArg) {
     var definitions,
         _thisArg = thisArg,
-        parent = getParent();
+        parent = getParent(),
+        hasBackground = false;
 
     if ((type === FEATURE) || (type === SCENARIO) || (type === BACKGROUND)) {
       definitions = {};
@@ -69,6 +70,20 @@
     }
 
     if (parent) {
+      if (type === BACKGROUND) {
+        if (parent.type !== FEATURE) {
+          throw new Error("Can't define a background in a different place than a feature");
+        }
+        for (var i in parent.definitions) {
+          if (parent.definitions[i].type === BACKGROUND) {
+            hasBackground = true;
+            break;
+          }
+        }
+        if (hasBackground) {
+          throw new Error("Can't define two or more backgrounds inside a feature");
+        }
+      }
       parent.definitions[lastId] = {
         name: name,
         type: type,
