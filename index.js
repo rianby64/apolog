@@ -496,11 +496,10 @@
     }
   }
 
-  function run(config) {
+  function run() {
     var features = getFeatures(),
         l = features.length,
-        i, errors = [], result,
-        config = config || { reset: true };
+        i, errors = [], result;
 
     for (i = 0; i < l; i++) {
       result = processDefinition(features[i]);
@@ -514,21 +513,7 @@
         }
       }
     }
-    if (config.reset) {
-      reset();
-    }
-    if ((config.throwError) || (config.showError)) {
-      if (errors.length) {
-        errors.forEach(function(item) {
-          if (config.throwError) {
-            throw item;
-          }
-          else if (config.showError) {
-            console.error(item.message);
-          }
-        });
-      }
-    }
+    reset();
     return errors;
   }
 
