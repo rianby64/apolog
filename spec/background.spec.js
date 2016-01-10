@@ -5,8 +5,7 @@ var example = [
       './spec/features/backgroundA.feature',
       './spec/features/backgroundB.feature',
       './spec/features/backgroundC.feature',
-      './spec/features/backgroundD.feature',
-      './spec/features/backgroundE.feature'
+      './spec/features/backgroundD.feature'
     ];
 
 describe("Sharing background execution", function() {
@@ -79,42 +78,8 @@ describe("Sharing background execution", function() {
     });
   });
 
-  // TODO: How to test that this definition throws an Error?
-  //background(function() {
-  //  this should be an error
-  //});
-
-  feature(/Feature (E)/, function(f) {
-    execution_map.feature_e = execution_map.feature_e || { map: "" };
-    execution_map.feature_e.map += "[" + f + "]";
-    background(/Background/, function() {
-      given(/a background/, function() {
-        execution_map.feature_e.map += "[bgD]";
-      });
-    });
-    // TODO: How to test that this definition throws an Error?
-    //background(function() {
-    //  given(/a background/, function() {
-    //    execution_map.feature_e.map += "[bg]";
-    //  });
-    //});
-    scenario(/Scene ([A-Za-z]+)/, function(s) {
-      // TODO: How to test that this definition throws an Error?
-      //background(function() {
-      //  given(/a background/, function() {
-      //    execution_map.feature_e.map += "[bg]";
-      //  });
-      //});
-      execution_map.feature_e.map += s;
-      given(/a given/,  function() {
-        execution_map.feature_e.map += "[g" + s + "]";
-      });
-    });
-  });
-
-
   errors = run();
-  it('with a correct shared execution map', function() {
+  it('with a correct shared background execution map', function() {
     expect(execution_map.feature_a.map).toBe("[A]ABC[bg][gA][bg][gB][bg][gC]");
     expect(execution_map.feature_b.map).toBe("[B]ABC[bg][gA][bg][gB][bg][gC]");
     expect(execution_map.feature_c.map).toBe("[C]ABC[bg][gA][bg][gB][bg][gC]");

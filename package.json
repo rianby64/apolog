@@ -16,7 +16,7 @@
   "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
   "main": "index.js",
   "scripts": {
-    "test": "node jasmine-runner.js",
+    "test": "node jasmine-reporter.js",
     "devel": "jasmine && chokidar 'index.js' 'spec/**/*.js' 'spec/**/*.feature' -c 'jasmine'"
   },
   "keywords": [
