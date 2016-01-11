@@ -87,6 +87,9 @@
       else if (type === FEATURE) {
         throw new Error("Can't define a feature inside any other definition");
       }
+      else if ((type === SCENARIO) && ((parent.type === STEP) || (parent.type === BACKGROUND) || (parent.type === SCENARIO))) {
+        throw new Error("Can't define an scenario inside any scenario nor background neither step");
+      }
       parent.definitions[lastId] = {
         name: name,
         type: type,
