@@ -1,6 +1,6 @@
 'use strict';
 // the next test are being performed by using the features from Apolog
-describe("Feature defined", function() {
+describe("Scenario overdefined", function() {
   var errors;
   loadFeature('./spec/features/overdefined.feature');
 
