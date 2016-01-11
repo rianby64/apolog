@@ -133,6 +133,7 @@
     _features = [];
     _parent = undefined;
     lastId = 0;
+    world = new World();
   }
 
   /**
