@@ -84,6 +84,9 @@
           throw new Error("Can't define two or more backgrounds inside a feature");
         }
       }
+      else if (type === FEATURE) {
+        throw new Error("Can't define a feature inside any other definition");
+      }
       parent.definitions[lastId] = {
         name: name,
         type: type,
