@@ -37,3 +37,30 @@ apolog.feature(/Some feature.../, function() {
 Check [documentation about the second helper](https://github.com/gradecam/jasmine-co) 
 
 For [Mocha](https://github.com/mochajs/mocha) you should add similar code.
+
+### A simple example
+Lets consider the first example given at [cucumber.io](https://cucumber.io/docs/reference)
+```
+Feature: Refund item
+
+  Scenario: Jeff returns a faulty microwave
+    Given Jeff has bought a microwave for $100
+    And he has a receipt
+    When he returns the microwave
+    Then Jeff should be refunded $100
+```
+
+Step by step:
+
+* npm install apolog jasmine --save-dev
+* create features and add [this file](https://gist.github.com/rianby64/bfb4f7391e6e34973745#file-simplestory-feature)
+* ./node_modules/.bin/jasmine init
+* follow the instructions above "How to integrate?"
+* add [this file](https://gist.github.com/rianby64/d998669d07f5582a186e#file-simplestory-spec-js)
+* add the script for testing at package.json
+* run tests "npm test"
+
+As you noticed in the .spec.js are defined every step given at .feature file. Also, .spec.js points to the .feature file by calling loadFeature(...); so after loading one or more features you've to run the story against the definitions by calling run().
+
+Internally run() matches all the definitions with the loaded features and finally resets everything. By this reason, run() must be the last thing that should be called at any .spec.js file.
+
