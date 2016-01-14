@@ -64,3 +64,5 @@ As you noticed in the .spec.js are defined every step given at .feature file. Al
 
 Internally run() matches all the definitions with the loaded features and finally resets everything. By this reason, run() must be the last thing that should be called at any .spec.js file.
 
+Also run() returns an array with possible errors, i.e. if run() === [] then no errors were found, and all definitions matched each line from .feature file. But, if run !== [] then some errors ocurred silently. So, check everytime if errors were found after running run()
+
