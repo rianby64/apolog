@@ -13,7 +13,7 @@ If you plan to use [Apolog](https://github.com/rianby64/apolog) with [Jasmine](h
 
 1. [jasmine init](http://jasmine.github.io/2.4/node.html)
 
-2. add [this](https://github.com/rianby64/apolog/blob/master/spec/helpers/apolog.js) to the spec/helper directory
+2. add [this](https://gist.github.com/rianby64/eaa4c899c2e41a143b7a#file-apolog-js) to the spec/helper directory
 
 3. If you plan to use [generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*) then don't forget to add [this](https://github.com/rianby64/apolog/blob/master/spec/helpers/jasmine-co.js) to the spec/helper directory
 
@@ -53,7 +53,7 @@ Feature: Refund item
 Step by step:
 
 * npm install apolog jasmine --save-dev
-* create features and add [this file](https://gist.github.com/rianby64/bfb4f7391e6e34973745#file-simplestory-feature)
+* create features directory and add [this file](https://gist.github.com/rianby64/bfb4f7391e6e34973745#file-simplestory-feature)
 * ./node_modules/.bin/jasmine init
 * follow the instructions above "How to integrate?"
 * add [this file](https://gist.github.com/rianby64/d998669d07f5582a186e#file-simplestory-spec-js)
