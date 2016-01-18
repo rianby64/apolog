@@ -9,7 +9,7 @@ The main goal is to provide a simple interface that process any .feature file wr
 npm install apolog --save-dev
 
 ### How to integrate?
-If you plan to use [Apolog](https://github.com/rianby64/apolog) with [Jasmine](https://github.com/jasmine/jasmine-npm) then I suggest you to
+If you plan to use [Apolog](https://github.com/rianby64/apolog) with [Jasmine](https://github.com/jasmine/jasmine-npm) then I suggest you to do the following:
 
 1. [jasmine init](http://jasmine.github.io/2.4/node.html)
 
@@ -54,10 +54,9 @@ Step by step:
 
 * npm install apolog jasmine --save-dev
 * create features directory and add [this file](https://gist.github.com/rianby64/bfb4f7391e6e34973745#file-simplestory-feature)
-* ./node_modules/.bin/jasmine init
 * follow the instructions above "How to integrate?"
-* add [this file](https://gist.github.com/rianby64/d998669d07f5582a186e#file-simplestory-spec-js)
-* add the script for testing at package.json
+* add [this file](https://gist.github.com/rianby64/d998669d07f5582a186e#file-simplestory-spec-js) to the spec directory
+* optionally, set the script for testing at package.json
 * run tests "npm test"
 
 As you noticed in the .spec.js are defined every step given at .feature file. Also, .spec.js points to the .feature file by calling loadFeature(...); so after loading one or more features you've to run the story against the definitions by calling run().
