@@ -56,7 +56,7 @@ Step by step:
 * create features directory and add [this file](https://gist.github.com/rianby64/bfb4f7391e6e34973745#file-simplestory-feature)
 * follow the instructions above "How to integrate?"
 * add [this file](https://gist.github.com/rianby64/d998669d07f5582a186e#file-simplestory-spec-js) to the spec directory
-* optionally, set the script for testing at package.json
+* optionally, set the script for testing at [package.json](https://gist.github.com/rianby64/fe48170397b3727bab6b#file-package-json)
 * run tests "npm test"
 
 As you noticed in the .spec.js are defined every step given at .feature file. Also, .spec.js points to the .feature file by calling loadFeature(...); so after loading one or more features you've to run the story against the definitions by calling run().
