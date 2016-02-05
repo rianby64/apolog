@@ -278,7 +278,7 @@
       args = feature.name.match(definition.name);
       if (args) { // the given regexp seems to fit the feature.name
         // seems that I need to study how to match strings to regexp
-        if (args[0] === args.input) { //feature.name) { // because here I do an strange comparison
+        if (args[0] === args.input) { // because here I do an strange comparison
           args = args.slice(1); // and then eliminate the first element
           result = definition;
         }
