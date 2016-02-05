@@ -18,4 +18,16 @@ global.loadFeature = function(feature) {
     path: feature
   });
 };
-
+global.loadFeatures = function(features) {
+  if (features instanceof String) {
+    loadFeature(features);
+  }
+  else if (features instanceof Array) {
+    features.forEach(function(item) {
+      loadFeature(item);
+    });
+  }
+  else {
+    throw new Error('unable to load features', features);
+  }
+};

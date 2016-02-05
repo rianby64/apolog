@@ -7,8 +7,7 @@ var example = [
 
 describe("Custom nested execution with", function() {
   var execution_map = {}, errors;
-  loadFeature(example[0]);
-  loadFeature(example[1]);
+  loadFeatures(example);
 
   errors = run();
   it("features not found", function() {
