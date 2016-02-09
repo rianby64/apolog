@@ -4,28 +4,32 @@
     define([], factory);
   } else if (typeof window === 'object') {
     // Browser globals (root is window)
-    window.apolog = factory(isGeneratorFunction);
+    window.apolog = factory();
   } else {
     // Node.js/IO.js
     module.exports = factory();
   }
-}(this, function (isGeneratorFunction) {
+}(this, function () {
   'use strict';
-  if (!isGeneratorFunction) {
-    isGeneratorFunction = require('is-generator').fn
+  /**
+   * Taken from https://github.com/blakeembrey/is-generator
+   * to avoid it as a dependency
+   * Check whether a function is generator.
+   *
+   * @param  {Function} fn
+   * @return {Boolean}
+   */
+  function isGeneratorFunction (fn) {
+    return typeof fn === 'function' &&
+      fn.constructor &&
+      fn.constructor.name === 'GeneratorFunction'
   }
+
   var FEATURE = "Feature",
       SCENARIO = "Scenario",
       SCENARIOOUTLINE = "ScenarioOutline",
       BACKGROUND = "Background",
       STEP = "Step",
-      /*
-      WHEN = "When",
-      THEN = "Then",
-      GIVEN = "Given",
-      AND = "And",
-      BUT = "But",
-      */
       OPEN_PLACEHOLDER = "<",
       CLOSE_PLACEHOLDER = ">",
       _definitions = {},
@@ -189,7 +193,6 @@
         currentParent = getParent();
 
     setParent(definition);
-    // TODO> think about describe context being executed async
     definition.fn.apply(definition.thisArg, args);
 
     if (definition.type === FEATURE) {
@@ -236,7 +239,7 @@
         }
       }
     }
-    
+
     setParent(currentParent);
     if (errors.length > 0) {
       return errors;
@@ -530,6 +533,9 @@
     }
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function run() {
     var features = getFeatures(),
         l = features.length,
@@ -551,6 +557,9 @@
     return errors;
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function loadFeature(feature, file) {
     var _feature = feature || {},
         Gherkin, parser;
@@ -566,10 +575,16 @@
     addFeature(_feature);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function feature(name, fn, thisArg) {
     return addDefinition(FEATURE, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function background(nameOrFn, fnOrThisArg, thisArgOrUndefined) {
     var name, fn, thisArg;
     if (nameOrFn) {
@@ -619,36 +634,57 @@
     return addDefinition(BACKGROUND, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function scenario(name, fn, thisArg) {
     return addDefinition(SCENARIO, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function step(name, fn, thisArg) {
     return addDefinition(STEP, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function given(name, fn, thisArg) {
     return addDefinition(STEP, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function when(name, fn, thisArg) {
     return addDefinition(STEP, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function then(name, fn, thisArg) {
     return addDefinition(STEP, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function and(name, fn, thisArg) {
     return addDefinition(STEP, name, fn, thisArg);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function but(name, fn, thisArg) {
     return addDefinition(STEP, name, fn, thisArg);
   }
 
   return {
-    feature: feature, 
+    feature: feature,
     background: background,
     scenario: scenario,
     step: step,
