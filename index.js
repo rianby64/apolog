@@ -1,28 +1,50 @@
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module.
-    define([], factory);
-  } else if (typeof window === 'object') {
-    // Browser globals (root is window)
-    window.apolog = factory();
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', 'gherkin'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('gherkin'));
   } else {
-    // Node.js/IO.js
-    module.exports = factory();
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.gherkin);
+    global.apolog = mod.exports;
   }
-}(this, function () {
+})(this, function (exports, _gherkin) {
   'use strict';
-  /**
-   * Taken from https://github.com/blakeembrey/is-generator
-   * to avoid it as a dependency
-   * Check whether a function is generator.
-   *
-   * @param  {Function} fn
-   * @return {Boolean}
-   */
-  function isGeneratorFunction (fn) {
-    return typeof fn === 'function' &&
-      fn.constructor &&
-      fn.constructor.name === 'GeneratorFunction'
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.run = run;
+  exports.loadFeature = loadFeature;
+  exports.feature = feature;
+  exports.background = background;
+  exports.scenario = scenario;
+  exports.step = step;
+  exports.given = given;
+  exports.when = when;
+  exports.then = then;
+  exports.and = and;
+  exports.but = but;
+
+  var Gherkin = _interopRequireWildcard(_gherkin);
+
+  function _interopRequireWildcard(obj) {
+    if (obj && obj.__esModule) {
+      return obj;
+    } else {
+      var newObj = {};
+
+      if (obj != null) {
+        for (var key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+        }
+      }
+
+      newObj.default = obj;
+      return newObj;
+    }
   }
 
   var FEATURE = "Feature",
@@ -38,11 +60,33 @@
       world = new World(),
       lastId = 0;
 
+  /**
+   * Taken from https://github.com/blakeembrey/is-generator
+   * to avoid it as a dependency
+   * Check whether a function is generator.
+   *
+   * @param  {Function} fn
+   * @return {Boolean}
+   */
+  function isGeneratorFunction(fn) {
+    return typeof fn === 'function' && fn.constructor && fn.constructor.name === 'GeneratorFunction';
+  }
+
+  /**
+   * TODO: Add documentation for this function
+   */
   function World() {}
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function setParent(parent) {
     _parent = parent;
   }
+
+  /**
+   * TODO: Add documentation for this function
+   */
   function getParent() {
     return _parent;
   }
@@ -60,7 +104,7 @@
         parent = getParent(),
         hasBackground = false;
 
-    if ((type === FEATURE) || (type === SCENARIO) || (type === BACKGROUND)) {
+    if (type === FEATURE || type === SCENARIO || type === BACKGROUND) {
       definitions = {};
     }
 
@@ -87,11 +131,9 @@
         if (hasBackground) {
           throw new Error("Can't define two or more backgrounds inside a feature");
         }
-      }
-      else if (type === FEATURE) {
+      } else if (type === FEATURE) {
         throw new Error("Can't define a feature inside any other definition");
-      }
-      else if ((type === SCENARIO) && ((parent.type === STEP) || (parent.type === BACKGROUND) || (parent.type === SCENARIO))) {
+      } else if (type === SCENARIO && (parent.type === STEP || parent.type === BACKGROUND || parent.type === SCENARIO)) {
         throw new Error("Can't define an scenario inside any scenario nor background neither step");
       }
       parent.definitions[lastId] = {
@@ -101,11 +143,10 @@
         thisArg: _thisArg,
         parent: parent,
         definitions: definitions,
-        executed: false 
-      }
-    }
-    else {
-      if ((type === BACKGROUND) && (name === undefined)) {
+        executed: false
+      };
+    } else {
+      if (type === BACKGROUND && name === undefined) {
         throw new Error("Can't define an unnamed background as general definition");
       }
       _definitions[lastId] = {
@@ -114,24 +155,36 @@
         fn: fn,
         thisArg: _thisArg,
         parent: undefined,
-        definitions: definitions,
-      }
+        definitions: definitions
+      };
     }
     lastId++;
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function getDefinitions() {
     return _definitions;
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function addFeature(feature) {
-    _features.push(feature)
+    _features.push(feature);
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function getFeatures() {
     return _features;
   }
 
+  /**
+   * TODO: Add documentation for this function
+   */
   function reset() {
     _definitions = {};
     _features = [];
@@ -150,7 +203,8 @@
    */
   function applyRow(row, example) {
     var result = row,
-        key, value;
+        key,
+        value;
     for (key in example) {
       value = example[key];
       result = result.replace(OPEN_PLACEHOLDER + key + CLOSE_PLACEHOLDER, value);
@@ -174,8 +228,7 @@
     for (j = 0; j < m; j++) {
       if (headers) {
         result[headers[j]] = row.cells[j].value;
-      }
-      else {
+      } else {
         result.push(row.cells[j].value);
       }
     }
@@ -189,7 +242,12 @@
    * @param {array} args given by matching feature.name with definitionFn.regExp
    */
   function applyDefinition(feature, definition, args) {
-    var items, i, l, background, errors = [], result,
+    var items,
+        i,
+        l,
+        background,
+        errors = [],
+        result,
         currentParent = getParent();
 
     setParent(definition);
@@ -217,15 +275,13 @@
         if (result) {
           if (result instanceof Error) {
             errors.push(result);
-          }
-          else {
+          } else {
             result.unshift(errors.length, 0);
             Array.prototype.splice.apply(errors, result);
           }
         }
       }
-    }
-    else if (feature.hasOwnProperty('steps')) {
+    } else if (feature.hasOwnProperty('steps')) {
       items = feature.steps;
       l = items.length;
       for (i = 0; i < l; i++) {
@@ -254,7 +310,8 @@
    * @return {function} definitionFn, {array}args
    */
   function match(feature, definition) {
-    var result, args,
+    var result,
+        args,
         feature_type = feature.type;
     if (feature_type === SCENARIOOUTLINE) {
       feature_type = SCENARIO;
@@ -263,34 +320,32 @@
     if (feature_type !== definition.type) {
       return;
     }
-    if ((definition.type === FEATURE) && (definition.executed)) {
+    if (definition.type === FEATURE && definition.executed) {
       return;
     }
 
-    if ((definition.name === undefined) && (definition.type === BACKGROUND)) {
+    if (definition.name === undefined && definition.type === BACKGROUND) {
       result = definition;
       args = [];
-    }
-    else if (definition.name.constructor === String) {
+    } else if (definition.name.constructor === String) {
       if (definition.name === feature.name) {
         result = definition;
         args = [];
       }
-    }
-    else if (definition.name.constructor === RegExp) {
+    } else if (definition.name.constructor === RegExp) {
       args = feature.name.match(definition.name);
-      if (args) { // the given regexp seems to fit the feature.name
+      if (args) {
+        // the given regexp seems to fit the feature.name
         // seems that I need to study how to match strings to regexp
-        if (args[0] === args.input) { // because here I do an strange comparison
+        if (args[0] === args.input) {
+          // because here I do an strange comparison
           args = args.slice(1); // and then eliminate the first element
           result = definition;
-        }
-        else {
+        } else {
           result = undefined;
         }
       }
-    }
-    else {
+    } else {
       return new Error('undefined type to identify the ' + feature.type + '"' + feature.name + '"' + ". This should be a regexp or an string object");
     }
 
@@ -309,12 +364,24 @@
   function processStep(step) {
     var parent = getParent(),
         definitions = parent.definitions,
-        item, args, args_l, definitionFn, result,
-        resolved, max, row = step.text,
-        i, l, dataTable;
+        item,
+        args,
+        args_l,
+        definitionFn,
+        result,
+        resolved,
+        max,
+        row = step.text,
+        i,
+        l,
+        dataTable;
 
+    /**
+     * TODO: Add documentation for this function
+     */
     function extendParams(done) {
-      var i, l = definitionFn.length;
+      var i,
+          l = definitionFn.length;
       if (dataTable) {
         l--;
       }
@@ -348,21 +415,33 @@
       row = applyRow(row, step.example);
     }
 
+    /**
+     * TODO: Add documentation for this function
+     */
     function enveloperAsync(done) {
       extendParams(done);
       definitionFn.apply(result.definition.thisArg, args);
     }
 
+    /**
+     * TODO: Add documentation for this function
+     */
     function* coenveloperAsync(done) {
       extendParams(done);
       yield* definitionFn.apply(result.definition.thisArg, args);
     }
 
+    /**
+     * TODO: Add documentation for this function
+     */
     function enveloper() {
       extendParams();
       definitionFn.apply(result.definition.thisArg, args);
     }
 
+    /**
+     * TODO: Add documentation for this function
+     */
     function* coenveloper() {
       extendParams();
       yield* definitionFn.apply(result.definition.thisArg, args);
@@ -386,8 +465,7 @@
       for (i = max; i >= 0; i--) {
         if (resolved.hasOwnProperty(i)) {
           result = resolved[i];
-        }
-        else {
+        } else {
           break;
         }
       }
@@ -397,13 +475,13 @@
       parent = parent.parent;
       if (!parent) {
         definitions = getDefinitions();
-      }
-      else {
+      } else {
         definitions = parent.definitions;
       }
     }
 
-    if (result) { // if definitionFn found
+    if (result) {
+      // if definitionFn found
       definitionFn = result.definition.fn;
       args = result.args;
       args_l = args.length;
@@ -413,42 +491,52 @@
       if (args_l < definitionFn.length) {
         if (isGeneratorFunction(definitionFn)) {
           it(row, coenveloperAsync);
-        }
-        else {
+        } else {
           it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
         }
-      }
-      else {
-        if (isGeneratorFunction(definitionFn)) {
-          it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
+      } else {
+          if (isGeneratorFunction(definitionFn)) {
+            it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
+          } else {
+              it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
+            }
         }
-        else {
-          it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
-        }
-      }
       return;
     }
     // If no definition matchet at all
     else {
-      // TODO> make the standard format for this warning
-      // TODO> take in count the info given at definition.location
-      return new Error(step.keyword + 'not found "' + row + '"', step.file.path);
-    }
+        // TODO> make the standard format for this warning
+        // TODO> take in count the info given at definition.location
+        return new Error(step.keyword + 'not found "' + row + '"', step.file.path);
+      }
   }
 
   /**
    * TODO: Add documentation for this function
    */
   function processDefinition(definition, background) {
-    var definitions, item, args, found, parent = getParent(),
-        i, l, examples, headers, tableHeader, tableBody,
-        definition_item, definition_replaced, background_replaced,
-        definition_set = [definition], background_set, errors = [], result;
+    var definitions,
+        item,
+        args,
+        found,
+        parent = getParent(),
+        i,
+        l,
+        examples,
+        headers,
+        tableHeader,
+        tableBody,
+        definition_item,
+        definition_replaced,
+        background_replaced,
+        definition_set = [definition],
+        background_set,
+        errors = [],
+        result;
 
     if (parent) {
       definitions = parent.definitions;
-    }
-    else {
+    } else {
       definitions = getDefinitions();
     }
 
@@ -478,7 +566,7 @@
 
     l = definition_set.length;
     for (i = 0; i < l; i++) {
-      definition_item = definition_set[i]
+      definition_item = definition_set[i];
       while (true) {
         for (item in definitions) {
           found = match(definition_item, definitions[item]);
@@ -513,7 +601,7 @@
             Array.prototype.splice.apply(errors, result);
           }
         }
-        describe(definition_item.name, function() {
+        describe(definition_item.name, function () {
           result = applyDefinition(definition_item, found.definition, found.args);
           if (result) {
             result.unshift(errors.length, 0);
@@ -523,10 +611,10 @@
       }
       // If no definition matchet at all
       else {
-        // TODO> make the standard format for this warning
-        // TODO> take in count the info given at definition.location
-        return new Error(definition_item.type + ' not found "' + definition_item.name + '"', definition_item.file.path);
-      }
+          // TODO> make the standard format for this warning
+          // TODO> take in count the info given at definition.location
+          return new Error(definition_item.type + ' not found "' + definition_item.name + '"', definition_item.file.path);
+        }
     }
     if (errors.length > 0) {
       return errors;
@@ -539,15 +627,16 @@
   function run() {
     var features = getFeatures(),
         l = features.length,
-        i, errors = [], result;
+        i,
+        errors = [],
+        result;
 
     for (i = 0; i < l; i++) {
       result = processDefinition(features[i]);
       if (result) {
         if (result instanceof Error) {
           errors.push(result);
-        }
-        else {
+        } else {
           result.unshift(errors.length, 0);
           Array.prototype.splice.apply(errors, result);
         }
@@ -562,11 +651,10 @@
    */
   function loadFeature(feature, file) {
     var _feature = feature || {},
-        Gherkin, parser;
+        parser;
 
     // Be careful with this comparision. I'm assuming that programm is running in nodeJS environment
     if (feature.constructor === String) {
-      Gherkin = require('gherkin');
       parser = new Gherkin.Parser();
       _feature = parser.parse(feature);
     }
@@ -588,20 +676,17 @@
   function background(nameOrFn, fnOrThisArg, thisArgOrUndefined) {
     var name, fn, thisArg;
     if (nameOrFn) {
-      if ((nameOrFn.constructor === String) || (nameOrFn.constructor === RegExp)) {
+      if (nameOrFn.constructor === String || nameOrFn.constructor === RegExp) {
         name = nameOrFn;
-      }
-      else if (nameOrFn.constructor === Function) {
+      } else if (nameOrFn.constructor === Function) {
         name = undefined;
         fn = nameOrFn;
-      }
-      else {
+      } else {
         throw new Error("Incorrect name definition for background"); // TODO: Think about this error and how to show it
       }
-    }
-    else {
-      throw new Error("Something was wrong");
-    }
+    } else {
+        throw new Error("Something was wrong");
+      }
 
     if (fnOrThisArg) {
       if (fnOrThisArg.constructor === Function) {
@@ -609,8 +694,7 @@
           throw new Error("Incorrect fn definition> two functions?"); // TODO: see above
         }
         fn = fnOrThisArg;
-      }
-      else if (fnOrThisArg.constructor === Object) {
+      } else if (fnOrThisArg.constructor === Object) {
         if (name !== undefined) {
           throw new Error("Incorrect fn definition> where's the definition function?"); // TODO: see above
         }
@@ -623,10 +707,9 @@
         if (fn.constructor === Object) {
           throw new Error("Incorrect fn definition> why two thisArgs?"); // TODO: see above
         }
-        if ((fn.constructor === Function) && ((name.constructor === String) || (name.constructor === RegExp))) {
+        if (fn.constructor === Function && (name.constructor === String || name.constructor === RegExp)) {
           thisArg = thisArgOrUndefined;
-        }
-        else {
+        } else {
           throw new Error("Read the documentation...");
         }
       }
@@ -682,19 +765,4 @@
   function but(name, fn, thisArg) {
     return addDefinition(STEP, name, fn, thisArg);
   }
-
-  return {
-    feature: feature,
-    background: background,
-    scenario: scenario,
-    step: step,
-    given: given,
-    when: when,
-    then: then,
-    and: and,
-    but: but,
-    loadFeature: loadFeature,
-    run: run
-  };
-
-}));
+});

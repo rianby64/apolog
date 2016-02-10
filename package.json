@@ -16,8 +16,11 @@
   "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
   "main": "index.js",
   "scripts": {
-    "test": "node jasmine-reporter.js",
-    "devel": "jasmine && chokidar 'index.js' 'spec/**/*.js' 'spec/**/*.feature' -c 'jasmine'"
+    "test": "npm run build && node jasmine-reporter.js",
+    "babel": "babel src/apolog.js -o index.js",
+    "eslint": "eslint src/apolog.js",
+    "build": "npm run eslint && npm run babel",
+    "devel": "npm run build && jasmine && chokidar 'src/**/*.js' 'spec/**/*.js' 'spec/**/*.feature' -c 'npm run build && jasmine'"
   },
   "keywords": [
     "Gherkin",
@@ -31,9 +34,10 @@
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",
+    "babel-eslint": "^4.1.8",
     "babel-plugin-transform-es2015-modules-umd": "^6.5.0",
-    "babel-preset-es2015": "^6.5.0",
     "chokidar-cli": "^1.2.0",
+    "eslint": "^1.10.3",
     "jasmine": "^2.4.1",
     "jasmine-co": "^1.1.0",
     "jasmine-spec-reporter": "^2.4.0"
