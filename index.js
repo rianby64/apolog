@@ -58,7 +58,11 @@
       _features = [],
       _parent,
       world = new World(),
-      lastId = 0;
+      lastId = 0,
+      __apolog_detected = {
+    it: undefined,
+    describe: undefined
+  };
 
   /**
    * Taken from https://github.com/blakeembrey/is-generator
@@ -490,15 +494,15 @@
       }
       if (args_l < definitionFn.length) {
         if (isGeneratorFunction(definitionFn)) {
-          it(row, coenveloperAsync);
+          __apolog_detected.it(row, coenveloperAsync);
         } else {
-          it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
+          __apolog_detected.it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
         }
       } else {
           if (isGeneratorFunction(definitionFn)) {
-            it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
+            __apolog_detected.it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
           } else {
-              it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
+              __apolog_detected.it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
             }
         }
       return;
@@ -601,7 +605,7 @@
             Array.prototype.splice.apply(errors, result);
           }
         }
-        describe(definition_item.name, function () {
+        __apolog_detected.describe(definition_item.name, function () {
           result = applyDefinition(definition_item, found.definition, found.args);
           if (result) {
             result.unshift(errors.length, 0);
@@ -630,6 +634,15 @@
         i,
         errors = [],
         result;
+
+    if (describe instanceof Function && it instanceof Function) {
+      __apolog_detected.it = it;
+      __apolog_detected.describe = describe;
+    } else {
+      errors.push(new Error("Definitions for 'describe' and 'it' are not present. Install a BDD framework in order to proced with testing"));
+      reset();
+      return errors;
+    }
 
     for (i = 0; i < l; i++) {
       result = processDefinition(features[i]);
