@@ -16,6 +16,7 @@
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.setupDialect = setupDialect;
   exports.run = run;
   exports.loadFeature = loadFeature;
   exports.feature = feature;
@@ -59,7 +60,7 @@
       _parent,
       world = new World(),
       lastId = 0,
-      __apolog_detected = {
+      bdd_functions = {
     it: undefined,
     describe: undefined
   };
@@ -195,6 +196,20 @@
     _parent = undefined;
     lastId = 0;
     world = new World();
+  }
+
+  /**
+   * Setup BDD functions 'Dialect' for testing
+   * @param {object} config Holds definitions 'describe' and 'it'
+   */
+  function setupDialect(config) {
+    var config = config || {};
+    if (config.it instanceof Function && config.describe instanceof Function) {
+      bdd_functions.it = config.it;
+      bdd_functions.describe = config.describe;
+    } else {
+      throw new Error("Definitions for 'describe' and 'it' are not present in the config");
+    }
   }
 
   /**
@@ -494,15 +509,15 @@
       }
       if (args_l < definitionFn.length) {
         if (isGeneratorFunction(definitionFn)) {
-          __apolog_detected.it(row, coenveloperAsync);
+          bdd_functions.it(row, coenveloperAsync);
         } else {
-          __apolog_detected.it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
+          bdd_functions.it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
         }
       } else {
           if (isGeneratorFunction(definitionFn)) {
-            __apolog_detected.it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
+            bdd_functions.it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
           } else {
-              __apolog_detected.it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
+              bdd_functions.it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
             }
         }
       return;
@@ -605,7 +620,7 @@
             Array.prototype.splice.apply(errors, result);
           }
         }
-        __apolog_detected.describe(definition_item.name, function () {
+        bdd_functions.describe(definition_item.name, function () {
           result = applyDefinition(definition_item, found.definition, found.args);
           if (result) {
             result.unshift(errors.length, 0);
@@ -635,14 +650,18 @@
         errors = [],
         result;
 
-    if (describe instanceof Function && it instanceof Function) {
-      __apolog_detected.it = it;
-      __apolog_detected.describe = describe;
+    // By default the set of BDD functions 'it' and 'describe' is installed
+    if (bdd_functions.it && bdd_functions.describe) {
+      // Do nothing... already defined
     } else {
-      errors.push(new Error("Definitions for 'describe' and 'it' are not present. Install a BDD framework in order to proced with testing"));
-      reset();
-      return errors;
-    }
+        try {
+          setupDialect({ it: it, describe: describe });
+        } catch (e) {
+          e.message += ". Install a BDD framework in order to test";
+          reset();
+          throw e;
+        }
+      }
 
     for (i = 0; i < l; i++) {
       result = processDefinition(features[i]);

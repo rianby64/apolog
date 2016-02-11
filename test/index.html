@@ -6,13 +6,28 @@
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
+
+    <script src="/node_modules/gherkin/dist/gherkin.js"></script>
+    <script src="/index.js"></script>
   </head>
   <body>
     <script>
+
+      var feature = `
+Feature: A feature
+  Scenario: An scenario
+    Given a given
+    When a when
+    Then a then`;
+
+      apolog.setupDialect({ it: test, describe: suite });
+      apolog.loadFeature(feature, 'test/index.html');
       // Load and run all tests (.html, .js):
       WCT.loadSuites([
         'test.html'
       ]);
+
+      apolog.run();
     </script>
   </body>
 </html>

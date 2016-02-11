@@ -19,6 +19,7 @@
     "postinstall": "bower install",
     "test": "npm run build && node jasmine-reporter.js && wct",
     "wct": "wct",
+    "wct-devel": "wct && chokidar 'test/**/*' -c 'wct'",
     "babel": "babel src/apolog.js -o index.js",
     "eslint": "eslint src/apolog.js",
     "build": "npm run eslint && npm run babel",
