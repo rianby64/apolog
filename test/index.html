@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <script src="/node_modules/gherkin/dist/gherkin.js"></script -->
+    <script src="/index.js"></script>
+  </head>
+  <body>
+    <script>
+
+      var featureFile = "Feature: A feature\n" +
+" Scenario: An scenario\n" +
+"   Given a given\n" +
+"   When a when\n" +
+"   Then a then\n";
+      var result,
+          feature = apolog.feature,
+          scenario = apolog.scenario,
+          step = apolog.step;
+
+      apolog.setupGherkin(Gherkin);
+      apolog.setupDialect({ it: test, describe: suite });
+      apolog.loadFeature(featureFile, 'test/index.html');
+
+      feature('A feature', function() {
+        scenario('An scenario', function() {
+          step('a given', function() {
+            assert.equal(true, true);
+
+          });
+          step('a when', function() {
+            assert.equal(true, true);
+
+          });
+          step('a then', function() {
+            assert.equal(true, true);
+
+          });
+        });
+      });
+
+      result = apolog.run();
+      if (result instanceof Array) {
+        result.forEach(function(item) {
+          throw item;
+        });
+      }
+    </script>
+  </body>
+</html>
+

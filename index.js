@@ -16,6 +16,8 @@
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.setupDialect = setupDialect;
+  exports.setupGherkin = setupGherkin;
   exports.run = run;
   exports.loadFeature = loadFeature;
   exports.feature = feature;
@@ -58,7 +60,11 @@
       _features = [],
       _parent,
       world = new World(),
-      lastId = 0;
+      lastId = 0,
+      bdd_functions = {
+    it: undefined,
+    describe: undefined
+  };
 
   /**
    * Taken from https://github.com/blakeembrey/is-generator
@@ -191,6 +197,28 @@
     _parent = undefined;
     lastId = 0;
     world = new World();
+  }
+
+  /**
+   * Setup BDD functions 'Dialect' for testing
+   * @param {object} config Holds definitions 'describe' and 'it'
+   */
+  function setupDialect(config) {
+    var config = config || {};
+    if (config.it instanceof Function && config.describe instanceof Function) {
+      bdd_functions.it = config.it;
+      bdd_functions.describe = config.describe;
+    } else {
+      throw new Error("Definitions for 'describe' and 'it' are not present in the config");
+    }
+  }
+
+  /**
+   * Please, refactor this function or do something different... this is a critical patch
+   * @param {object} gherkin Holds the Gherkin3 object that usually comes from require('gerkin')
+   */
+  function setupGherkin(gherkin) {
+    Gherkin = gherkin;
   }
 
   /**
@@ -490,15 +518,15 @@
       }
       if (args_l < definitionFn.length) {
         if (isGeneratorFunction(definitionFn)) {
-          it(row, coenveloperAsync);
+          bdd_functions.it(row, coenveloperAsync);
         } else {
-          it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
+          bdd_functions.it(row, enveloperAsync); // send to it the final version for definitionFn enveloped into an enveloper
         }
       } else {
           if (isGeneratorFunction(definitionFn)) {
-            it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
+            bdd_functions.it(row, coenveloper); // send to it the final version for definitionFn enveloped into an enveloper
           } else {
-              it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
+              bdd_functions.it(row, enveloper); // send to it the final version for definitionFn enveloped into an enveloper
             }
         }
       return;
@@ -601,7 +629,7 @@
             Array.prototype.splice.apply(errors, result);
           }
         }
-        describe(definition_item.name, function () {
+        bdd_functions.describe(definition_item.name, function () {
           result = applyDefinition(definition_item, found.definition, found.args);
           if (result) {
             result.unshift(errors.length, 0);
@@ -630,6 +658,19 @@
         i,
         errors = [],
         result;
+
+    // By default the set of BDD functions 'it' and 'describe' is installed
+    if (bdd_functions.it && bdd_functions.describe) {
+      // Do nothing... already defined
+    } else {
+        try {
+          setupDialect({ it: it, describe: describe });
+        } catch (e) {
+          e.message += ". Install a BDD framework in order to test";
+          reset();
+          throw e;
+        }
+      }
 
     for (i = 0; i < l; i++) {
       result = processDefinition(features[i]);

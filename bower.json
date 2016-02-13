@@ -1,0 +1,28 @@
+{
+  "name": "apolog",
+  "description": "A simple interface to apply features described in Gherkins to any test framework (BDD)",
+  "main": "index.js",
+  "authors": [
+    "Andres Rios <rianby64@gmail.com>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "Gherkin",
+    "Cucumbers",
+    "BDD",
+    "TDD"
+  ],
+  "homepage": "https://github.com/rianby64/apolog",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "polymer": "^1.2.4",
+    "web-component-tester": "^4.2.0"
+  }
+}
