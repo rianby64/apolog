@@ -172,6 +172,14 @@ export function setupDialect(config) {
 }
 
 /**
+ * Please, refactor this function or do something different... this is a critical patch
+ * @param {object} gherkin Holds the Gherkin3 object that usually comes from require('gerkin')
+ */
+export function setupGherkin(gherkin) {
+  Gherkin = gherkin;
+}
+
+/**
  * interpolates a row string that contains some <placeholders> with an example object
  * e.g. row = "<placeholder1> <placeholder2>" and
  *      example = { placeholder1: "value1", placeholder2: "value2" }

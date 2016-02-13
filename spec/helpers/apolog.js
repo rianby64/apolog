@@ -13,6 +13,10 @@ global.step = apolog.step;
 global.and = apolog.and;
 global.but = apolog.but;
 global.run = apolog.run;
+
+global.setupDialect = apolog.setupDialect;
+global.setupGherkin = apolog.setupGherkin;
+
 global.loadFeature = function(feature) {
   _loadFeature(fs.readFileSync(feature, 'utf8'), {
     path: feature

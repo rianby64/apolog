@@ -38,6 +38,14 @@ describe("The construction of embedded definitions", function() {
       expect(run instanceof Function).toBe(true);
       expect(run.length).toBe(0);
     });
+    it("contains> setupDialect", function() {
+      expect(setupDialect instanceof Function).toBe(true);
+      expect(setupDialect.length).toBe(1);
+    });
+    it("contains> setupGherkin", function() {
+      expect(setupGherkin instanceof Function).toBe(true);
+      expect(setupGherkin.length).toBe(1);
+    });
   });
 
 });

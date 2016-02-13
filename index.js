@@ -17,6 +17,7 @@
     value: true
   });
   exports.setupDialect = setupDialect;
+  exports.setupGherkin = setupGherkin;
   exports.run = run;
   exports.loadFeature = loadFeature;
   exports.feature = feature;
@@ -210,6 +211,14 @@
     } else {
       throw new Error("Definitions for 'describe' and 'it' are not present in the config");
     }
+  }
+
+  /**
+   * Please, refactor this function or do something different... this is a critical patch
+   * @param {object} gherkin Holds the Gherkin3 object that usually comes from require('gerkin')
+   */
+  function setupGherkin(gherkin) {
+    Gherkin = gherkin;
   }
 
   /**

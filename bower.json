@@ -22,7 +22,6 @@
     "tests"
   ],
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#^1.1.4",
     "polymer": "^1.2.4",
     "web-component-tester": "^4.2.0"
   }
