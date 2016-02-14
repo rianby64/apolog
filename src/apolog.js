@@ -13,10 +13,12 @@ var FEATURE = "Feature",
     _parent,
     world = new World(),
     lastId = 0,
+    setupOnce_passed = false,
     bdd_functions = {
       it: undefined,
       describe: undefined
-    };
+    },
+    parserFn;
 
 /**
  * Taken from https://github.com/blakeembrey/is-generator
@@ -160,23 +162,71 @@ function reset() {
  * Setup BDD functions 'Dialect' for testing
  * @param {object} config Holds definitions 'describe' and 'it'
  */
-export function setupDialect(config) {
+function setupDialect(config) {
   var config = config || {};
   if ((config.it instanceof Function) && (config.describe instanceof Function)) {
     bdd_functions.it = config.it;
     bdd_functions.describe = config.describe;
   }
   else {
-    throw new Error("Definitions for 'describe' and 'it' are not present in the config");
+    // Default action
+    try {
+      setupDialect({ it: it, describe: describe });
+      return;
+    }
+    catch (e) {
+      reset();
+      throw e;
+    }
+    throw new Error("Definitions for 'describe' and 'it' are not present in the config. Install a BDD framework in order to test");
   }
 }
 
 /**
- * Please, refactor this function or do something different... this is a critical patch
- * @param {object} gherkin Holds the Gherkin3 object that usually comes from require('gerkin')
+ * Setup the parser that will process the text given when loading features
+ * And if no parser provided then set a parser by default from Gherkin
+ * @param {object} parser Holds the function that parses the string into a Gherkin-object
  */
-export function setupGherkin(gherkin) {
-  Gherkin = gherkin;
+function setupParser(parser) {
+  if (parser) {
+    parserFn = parser;
+  }
+  else {
+    if (Gherkin) {
+      parserFn = new Gherkin.Parser().parse;
+    }
+    else {
+      throw new Error("A Parser must be given. Install Gherkin");
+    }
+  }
+}
+
+/**
+ * TODO: Add documentation for this function
+ */
+export function setup(cfg) {
+  setupOnce_passed = true;
+  if (!cfg) { // run setup by default
+    setupParser();
+    setupDialect();
+    return;
+  }
+  if (cfg.parser) {
+    setupParser(cfg.parser);
+  }
+  if (cfg.bdd) {
+    setupDialect(cfg.bdd);
+  }
+}
+
+/**
+ * Performs a setup process once
+ */
+function defaultSetupOnce() {
+  if (setupOnce_passed) {
+    return;
+  }
+  setup();
 }
 
 /**
@@ -595,21 +645,7 @@ export function run() {
       l = features.length,
       i, errors = [], result;
 
-  // By default the set of BDD functions 'it' and 'describe' is installed
-  if ((bdd_functions.it) && (bdd_functions.describe)) {
-    // Do nothing... already defined
-  }
-  else {
-    try {
-      setupDialect({ it: it, describe: describe });
-    }
-    catch (e) {
-      e.message += ". Install a BDD framework in order to test";
-      reset();
-      throw e;
-    }
-  }
-
+  defaultSetupOnce();
   for (i = 0; i < l; i++) {
     result = processDefinition(features[i]);
     if (result) {
@@ -630,13 +666,12 @@ export function run() {
  * TODO: Add documentation for this function
  */
 export function loadFeature(feature, file) {
-  var _feature = feature || {},
-      parser;
+  var _feature = feature || {};
+  defaultSetupOnce();
 
   // Be careful with this comparision. I'm assuming that programm is running in nodeJS environment
   if (feature.constructor === String) {
-    parser = new Gherkin.Parser();
-    _feature = parser.parse(feature);
+    _feature = parserFn(feature);
   }
 
   _feature.file = file || {};

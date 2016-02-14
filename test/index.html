@@ -7,8 +7,8 @@
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <script src="/node_modules/gherkin/dist/gherkin.js"></script -->
     <script src="/index.js"></script>
+    <script src="/node_modules/gherkin/dist/gherkin.js">
   </head>
   <body>
     <script>
@@ -23,8 +23,10 @@
           scenario = apolog.scenario,
           step = apolog.step;
 
-      apolog.setupGherkin(Gherkin);
-      apolog.setupDialect({ it: test, describe: suite });
+      apolog.setup({
+        parser: new Gherking.Parser().parse,
+        bdd: { it: test, describe: suite },
+      });
       apolog.loadFeature(featureFile, 'test/index.html');
 
       feature('A feature', function() {
