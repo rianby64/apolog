@@ -42,6 +42,9 @@ describe("The construction of embedded definitions", function() {
       expect(setup instanceof Function).toBe(true);
       expect(setup.length).toBe(1);
     });
+    // TODO: write tests for setup
+    // 1) when setting up a parser
+    // 2) when setting up the bdd functions
   });
 
 });

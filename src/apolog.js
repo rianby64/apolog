@@ -202,7 +202,12 @@ function setupParser(parser) {
 }
 
 /**
- * TODO: Add documentation for this function
+ * In order to setup Apolog cfg param should have the following attributes
+ *   bdd: { it: function, describe: function } and
+ *   parser: function
+ * Be sure that it and describe are functions that behaves in the expected way
+ * and also parser function accepts an string and returns a Gherkin-Object
+ * @param {object} cfg Has the config attributes to setup
  */
 export function setup(cfg) {
   setupOnce_passed = true;
