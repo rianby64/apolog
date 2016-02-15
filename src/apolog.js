@@ -14,6 +14,7 @@ var FEATURE = "Feature",
     world = new World(),
     lastId = 0,
     setupOnce_passed = false,
+    throwErrors_flag = false, // by default DON'T throw error
     bdd_functions = {
       it: undefined,
       describe: undefined
@@ -203,8 +204,9 @@ function setupParser(parser) {
 
 /**
  * In order to setup Apolog cfg param should have the following attributes
- *   bdd: { it: function, describe: function } and
+ *   bdd: { it: function, describe: function }
  *   parser: function
+ *   throwErrors: boolean - throw instead of return them
  * Be sure that it and describe are functions that behaves in the expected way
  * and also parser function accepts an string and returns a Gherkin-Object
  * @param {object} cfg Has the config attributes to setup
@@ -221,6 +223,9 @@ export function setup(cfg) {
   }
   if (cfg.bdd) {
     setupDialect(cfg.bdd);
+  }
+  if (cfg.hasOwnProperty('throwErrors')) {
+    throwErrors_flag = cfg.throwErrors; 
   }
 }
 
@@ -385,7 +390,7 @@ function match(feature, definition) {
     }
   }
   else {
-    return new Error('undefined type to identify the ' + feature.type + '"' + feature.name + '"' + ". This should be a regexp or an string object");
+    throw new Error('undefined type to identify the ' + feature.type + '"' + feature.name + '"' + ". This should be a regexp or an string object");
   }
 
   if (result) {
@@ -405,7 +410,7 @@ function processStep(step) {
       definitions = parent.definitions,
       item, args, args_l, definitionFn, result,
       resolved, max, row = step.text,
-      i, l, dataTable;
+      i, l, dataTable, e;
 
   /**
    * TODO: Add documentation for this function
@@ -541,7 +546,13 @@ function processStep(step) {
   else {
     // TODO> make the standard format for this warning
     // TODO> take in count the info given at definition.location
-    return new Error(step.keyword + 'not found "' + row + '"', step.file.path);
+    e = new Error(step.keyword + 'not found "' + row + '"', step.file.path);
+    if (throwErrors_flag) {
+      throw e;
+    }
+    else {
+      return e;
+    }
   }
 }
 
@@ -552,7 +563,7 @@ function processDefinition(definition, background) {
   var definitions, item, args, found, parent = getParent(),
       i, l, examples, headers, tableHeader, tableBody,
       definition_item, definition_replaced, background_replaced,
-      definition_set = [definition], background_set, errors = [], result;
+      definition_set = [definition], background_set, errors = [], result, e;
 
   if (parent) {
     definitions = parent.definitions;
@@ -615,7 +626,13 @@ function processDefinition(definition, background) {
         if (result instanceof Error) {
           // TODO> make the standard format for this warning
           // TODO> take in count the info given at definition.location
-          return new Error(background_replaced.type + ' not found "' + background_replaced.name + '"', background_replaced.file.path);
+          e = new Error(background_replaced.type + ' not found "' + background_replaced.name + '"', background_replaced.file.path);
+          if (throwErrors_flag) {
+            throw e;
+          }
+          else {
+            return e;
+          }
         }
         if (result) {
           result.unshift(errors.length, 0);
@@ -634,7 +651,13 @@ function processDefinition(definition, background) {
     else {
       // TODO> make the standard format for this warning
       // TODO> take in count the info given at definition.location
-      return new Error(definition_item.type + ' not found "' + definition_item.name + '"', definition_item.file.path);
+      e = new Error(definition_item.type + ' not found "' + definition_item.name + '"', definition_item.file.path);
+      if (throwErrors_flag) {
+        throw e;
+      }
+      else {
+        return e;
+      }
     }
   }
   if (errors.length > 0) {

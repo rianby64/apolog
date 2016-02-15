@@ -18,12 +18,13 @@
   "scripts": {
     "postinstall": "bower install",
     "test": "npm run build && node jasmine-reporter.js && wct",
+    "test2": "JASMINE_CONFIG_PATH=spec/support/jasmine.json jasmine && JASMINE_CONFIG_PATH=spec2/support/second_env.json jasmine",
     "wct": "wct",
-    "wct-devel": "wct && chokidar 'test/**/*' -c 'wct'",
+    "wct-devel": "wct && chokidar 'test/**/*' 'index.js' -c 'wct'",
     "babel": "babel src/apolog.js -o index.js",
     "eslint": "eslint src/apolog.js",
     "build": "npm run eslint && npm run babel",
-    "devel": "npm run build && jasmine && chokidar 'src/**/*.js' 'spec/**/*.js' 'spec/**/*.feature' -c 'npm run build && jasmine'"
+    "devel": "npm run build && npm run test2 && chokidar 'src/**/*.js' 'spec/**/*.js' 'spec/**/*.feature' -c 'npm run build && npm run test2'"
   },
   "keywords": [
     "Gherkin",
