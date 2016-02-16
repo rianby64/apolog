@@ -6,6 +6,8 @@ Feature: Testing parameters
      | z1 | z2 | z3 |
 
   Scenario Outline: Simple scenario <param1>
+    Given A simple set of one param
+      | only one string |
     Given A given <param2>
       | m1 | m2 | m3 |
     When A when <param3> <param2>

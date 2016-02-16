@@ -27,6 +27,9 @@ describe("it parsers a simple feature", function() {
     });
 
     scenario(/Simple scenario ([0-9a-zA-Z]+)/, function scenario(p) {
+      given('A simple set of one param', function(aSimpleParam) {
+        expect(aSimpleParam).toBe("only one string");
+      });
     });
     scenario(/Another scenario ([0-9a-zA-Z]+)/, function() {
     });

@@ -496,6 +496,11 @@
       }
       if (dataTable.length == 1) {
         dataTable = dataTable[0];
+        if (dataTable instanceof Array) {
+          if (dataTable.length == 1) {
+            dataTable = dataTable[0];
+          }
+        }
       }
     }
     if (step.example) {
