@@ -193,11 +193,8 @@ function setupParser(parser) {
     parserFn = parser;
   }
   else {
-    if (Gherkin) {
+    if (Gherkin.Parser) {
       parserFn = new Gherkin.Parser().parse;
-    }
-    else {
-      throw new Error("A Parser must be given. Install Gherkin");
     }
   }
 }
