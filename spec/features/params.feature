@@ -8,6 +8,11 @@ Feature: Testing parameters
   Scenario Outline: Simple scenario <param1>
     Given A simple set of one param
       | only one string |
+    Given A simple set like an array
+      | text1 |
+      | text2 |
+      | text3 |
+      | text4 |
     Given A given <param2>
       | m1 | m2 | m3 |
     When A when <param3> <param2>

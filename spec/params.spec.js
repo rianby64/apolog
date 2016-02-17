@@ -30,6 +30,10 @@ describe("it parsers a simple feature", function() {
       given('A simple set of one param', function(aSimpleParam) {
         expect(aSimpleParam).toBe("only one string");
       });
+      given('A simple set like an array', function(anArrayParam) {
+        var result = ['text1', 'text2', 'text3', 'text4'];
+        expect(anArrayParam).toEqual(result);
+      });
     });
     scenario(/Another scenario ([0-9a-zA-Z]+)/, function() {
     });

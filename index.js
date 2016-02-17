@@ -459,7 +459,8 @@
         i,
         l,
         dataTable,
-        e;
+        e,
+        parsedRow;
 
     /**
      * TODO: Add documentation for this function
@@ -490,7 +491,11 @@
       dataTable = [];
       l = step.argument.rows.length;
       for (i = 0; i < l; i++) {
-        dataTable.push(parseRow(step.argument.rows[i]));
+        parsedRow = parseRow(step.argument.rows[i]);
+        if (parsedRow instanceof Array && parsedRow.length === 1) {
+          parsedRow = parsedRow[0];
+        }
+        dataTable.push(parsedRow);
       }
       if (dataTable.length == 1) {
         dataTable = dataTable[0];
