@@ -108,7 +108,7 @@ function addDefinition(type, name, fn, thisArg) {
       thisArg: _thisArg,
       parent: parent,
       definitions: definitions,
-      executed: false 
+      executed: false
     }
   }
   else {
@@ -222,7 +222,7 @@ export function setup(cfg) {
     setupDialect(cfg.bdd);
   }
   if (cfg.hasOwnProperty('throwErrors')) {
-    throwErrors_flag = cfg.throwErrors; 
+    throwErrors_flag = cfg.throwErrors;
   }
 }
 

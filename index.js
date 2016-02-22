@@ -492,17 +492,15 @@
       l = step.argument.rows.length;
       for (i = 0; i < l; i++) {
         parsedRow = parseRow(step.argument.rows[i]);
-        if (parsedRow instanceof Array && parsedRow.length === 1) {
+        if (parsedRow instanceof Array && parsedRow.length == 1) {
           parsedRow = parsedRow[0];
         }
         dataTable.push(parsedRow);
       }
       if (dataTable.length == 1) {
         dataTable = dataTable[0];
-        if (dataTable instanceof Array) {
-          if (dataTable.length == 1) {
-            dataTable = dataTable[0];
-          }
+        if (dataTable instanceof Array && dataTable.length == 1) {
+          dataTable = dataTable[0];
         }
       }
     }
