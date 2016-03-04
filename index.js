@@ -29,24 +29,6 @@
   exports.and = and;
   exports.but = but;
 
-  var Gherkin = _interopRequireWildcard(_gherkin);
-
-  function _interopRequireWildcard(obj) {
-    if (obj && obj.__esModule) {
-      return obj;
-    } else {
-      var newObj = {};
-
-      if (obj != null) {
-        for (var key in obj) {
-          if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-        }
-      }
-
-      newObj.default = obj;
-      return newObj;
-    }
-  }
 
   var FEATURE = "Feature",
       SCENARIO = "Scenario",
@@ -233,8 +215,8 @@
     if (parser) {
       parserFn = parser;
     } else {
-      if (Gherkin.Parser) {
-        parserFn = new Gherkin.Parser().parse;
+      if (_gherkin.Parser) {
+        parserFn = new _gherkin.Parser().parse;
       }
     }
   }

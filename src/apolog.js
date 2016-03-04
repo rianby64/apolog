@@ -1,5 +1,5 @@
 'use strict';
-import * as Gherkin from 'gherkin';
+import {Parser} from 'gherkin';
 
 var FEATURE = "Feature",
     SCENARIO = "Scenario",
@@ -193,8 +193,8 @@ function setupParser(parser) {
     parserFn = parser;
   }
   else {
-    if (Gherkin.Parser) {
-      parserFn = new Gherkin.Parser().parse;
+    if (Parser) {
+      parserFn = new Parser().parse;
     }
   }
 }
