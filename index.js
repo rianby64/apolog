@@ -43,6 +43,7 @@
       world = new World(),
       lastId = 0,
       setupOnce_passed = false,
+      setupDefault_passed = false,
       throwErrors_flag = false,
       // by default DON'T throw error
   bdd_functions = {
@@ -240,9 +241,13 @@
     }
     if (cfg.parser) {
       setupParser(cfg.parser);
+    } else if (!setupDefault_passed) {
+      setupParser();
     }
     if (cfg.bdd) {
       setupDialect(cfg.bdd);
+    } else if (!setupDefault_passed) {
+      setupDialect();
     }
     if (cfg.hasOwnProperty('throwErrors')) {
       throwErrors_flag = cfg.throwErrors;
@@ -257,6 +262,7 @@
       return;
     }
     setup();
+    setupDefault_passed = true;
   }
 
   /**

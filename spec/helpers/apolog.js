@@ -1,5 +1,8 @@
 'use strict'
+require('jasmine-co').install();
+
 var apolog = require('../../index.js'),
+    gherkin = require('gherkin'),
     fs = require('fs'),
     _loadFeature = apolog.loadFeature;
 
@@ -33,3 +36,8 @@ global.loadFeatures = function(features) {
     throw new Error('unable to load features', features);
   }
 };
+
+setup({
+  throwErrors: false
+});
+
