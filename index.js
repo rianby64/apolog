@@ -44,7 +44,7 @@
       lastId = 0,
       setupOnce_passed = false,
       setupDefault_passed = false,
-      throwErrors_flag = false,
+      throwErrors_flag = true,
       // by default DON'T throw error
   bdd_functions = {
     it: undefined,

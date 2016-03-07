@@ -15,7 +15,7 @@ var FEATURE = "Feature",
     lastId = 0,
     setupOnce_passed = false,
     setupDefault_passed = false,
-    throwErrors_flag = false, // by default DON'T throw error
+    throwErrors_flag = true, // by default DON'T throw error
     bdd_functions = {
       it: undefined,
       describe: undefined
