@@ -2,7 +2,6 @@
 require('jasmine-co').install();
 
 var apolog = require('../../index.js'),
-    gherkin = require('gherkin'),
     fs = require('fs'),
     _loadFeature = apolog.loadFeature;
 
